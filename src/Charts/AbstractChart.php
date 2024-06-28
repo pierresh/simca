@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Pierresh\Simca\Charts;
 
-use SVG\Nodes\SVGNode;
 use SVG\Nodes\Structures\SVGDocumentFragment;
 
 use Pierresh\Simca\Model\Dot;
@@ -14,12 +13,15 @@ use Pierresh\Simca\Adapter\SVG;
 use Pierresh\Simca\Adapter\Text;
 use Pierresh\Simca\Adapter\Path;
 use Pierresh\Simca\Charts\Helper\Helper;
+use Pierresh\Simca\Charts\Handler\Traits;
 
 /**
  * @phpstan-type Serie array<int, float>
  */
 abstract class AbstractChart
 {
+	use Traits;
+
 	/** @var array<Serie> */
 	protected array $series = [];
 
@@ -105,30 +107,10 @@ abstract class AbstractChart
 		$this->grid = new Grid();
 	}
 
-	/** @param array<Serie> $series */
-	public function setSeries(array $series): self
-	{
-		$this->series = $series;
-
-		return $this;
-	}
-
 	/** @param array<string> $labels */
 	public function setLabels(array $labels): self
 	{
 		$this->labels = $labels;
-
-		return $this;
-	}
-
-	/** @param array<string> $colors */
-	public function setColors(array $colors): self
-	{
-		if ($colors === []) {
-			return $this;
-		}
-
-		$this->colors = $colors;
 
 		return $this;
 	}
@@ -628,13 +610,6 @@ abstract class AbstractChart
 		return $this->nbYkeys2 > 0;
 	}
 
-	protected function getColor(int $index): string
-	{
-		$colorIndex = $index % count($this->colors);
-
-		return $this->colors[$colorIndex];
-	}
-
 	private function getTimeStampStep(int $index): int
 	{
 		$duration = $this->maxX - $this->minX;
@@ -670,10 +645,5 @@ abstract class AbstractChart
 			// More than a year, display "YYYY"
 			return 'Y';
 		}
-	}
-
-	protected function addChild(SVGNode $child): void
-	{
-		$this->chart->addChild($child);
 	}
 }

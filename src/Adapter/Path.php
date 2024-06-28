@@ -21,4 +21,15 @@ class Path extends SVGNodeContainer
 
 		return $obj;
 	}
+
+	static function filled(
+		string $path,
+		string $color = '#aaaaaa',
+		float $width = 0.5
+	): SVGNodeContainer {
+		$obj = self::build($path, $color, $width);
+		$obj->setAttribute('fill', $color);
+
+		return $obj;
+	}
 }

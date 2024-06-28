@@ -2,6 +2,7 @@
 
 use Pierresh\Simca\Charts\LineChart;
 use Pierresh\Simca\Charts\BarChart;
+use Pierresh\Simca\Charts\PieChart;
 
 $chart = (new BarChart(600, 400))
 	->setSeries([[10, 45, 30, 25], [15, 20, 15, 25], [5, 2, 10, 15]])
@@ -33,6 +34,12 @@ $chart = (new LineChart(600, 400))
 		'nbYkeys2' => 1,
 		'margin' => 60,
 	])
+	->render();
+
+echo $chart;
+
+$chart = (new PieChart(400, 400))
+	->setSeries([[14, 0.5], [3, 0.9], [5, 0.8], [5, 1], [5, 0.9]])
 	->render();
 
 echo $chart;

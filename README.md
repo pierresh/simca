@@ -1,12 +1,30 @@
 # Simca
 
-SVG charts for PHP
+**SVG Charts for PHP**
 
-This project aims to be a complete solution for creating SVG charts in PHP.
+This project aims to be a complete solution for creating SVG charts in PHP. It is especially useful when charts need to be generated on the back-end to be included in emails and PDFs.
 
-This is useful when charts need to be genenerated in back-end to be included in emails and PDFs.
+![examples](app/example.png)
 
-The project is currently in progress, but the line chart feature is already available.
+## Available Chart Types
+
+### Bar Chart
+- Can be stacked
+- Can have a right axis with the `nbYkeys2` option
+
+### Line Chart
+- Can include a time scale
+- Can display objectives
+- Can display events
+- Can display a trend line
+- Can have a right axis with the `nbYkeys2` option
+
+### Pie Chart
+- Can be converted to a polar pie chart by adding a coefficient (see example below)
+
+## Future Development
+
+- Bubble chart (planned)
 
 ## Installation
 ```php
@@ -52,8 +70,14 @@ $chart = (new LineChart(600, 400))
 	])
 	->render();
 ```
+```php
+use Pierresh\Simca\Charts\PieChart;
 
-![examples](app/example.png)
+// The secondary value is an optional coefficient for polar pie chart
+$chart = (new PieChart(400, 400))
+	->setSeries([[14, 0.5], [3, 0.9], [5, 0.8], [5, 1], [5, 0.9]])
+	->render();
+```
 
 Alternatively, you can replace `render()` with `renderBase64()` to get a base64 encoded SVG image.
 
