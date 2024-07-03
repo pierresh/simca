@@ -2,6 +2,7 @@
 
 use Pierresh\Simca\Charts\LineChart;
 use Pierresh\Simca\Charts\BarChart;
+use Pierresh\Simca\Charts\BubbleChart;
 use Pierresh\Simca\Charts\PieChart;
 
 $chart = (new BarChart(600, 400))
@@ -40,6 +41,19 @@ echo $chart;
 
 $chart = (new PieChart(400, 400))
 	->setSeries([[14, 0.5], [3, 0.9], [5, 0.8], [5, 1], [5, 0.9]])
+	->render();
+
+echo $chart;
+
+$chart = (new BubbleChart(600, 400))
+	->setSeries([
+		['2024-06-01 08:00', 40, 30],
+		['2024-06-01 09:00', 20, 15],
+		['2024-06-01 12:00', 30, 25],
+	])
+	->setOptions([
+		'timeChart' => true,
+	])
 	->render();
 
 echo $chart;

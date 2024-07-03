@@ -192,10 +192,14 @@ abstract class AbstractChart
 		return $this;
 	}
 
-	private function generateChart(): string
+	protected function generateChart(): string
 	{
 		$image = SVG::build($this->width, $this->height);
 		$this->chart = $image->getDocument();
+
+		if ($this->isBubbleChart()) {
+			$this->computeLabels();
+		}
 
 		$this->computeMinMax();
 
@@ -205,13 +209,17 @@ abstract class AbstractChart
 
 		$this->drawXaxis();
 
-		$this->computeDots();
+		if (!$this->isBubbleChart()) {
+			$this->computeDots();
+		}
 
 		$this->drawChart();
 
 		$this->drawObjectives();
 
-		$this->addXAxisLabels();
+		if (!$this->isBubbleChart() || $this->isTimeChart) {
+			$this->addXAxisLabels();
+		}
 
 		return $image->toXMLString();
 	}
@@ -222,7 +230,11 @@ abstract class AbstractChart
 
 	abstract protected function computeMinMaxXaxis(): void;
 
-	private function computeMinMax(): void
+	protected function computeLabels(): void
+	{
+	}
+
+	protected function computeMinMax(): void
 	{
 		$this->minY1 = 0;
 		$this->maxY1 = 0.1;
@@ -447,7 +459,6 @@ abstract class AbstractChart
 
 		foreach ($this->labels as $index => $label) {
 			$x = $this->computeDotXNum($index);
-
 			$this->addXAxisLabel($label, $x);
 		}
 	}
@@ -465,7 +476,7 @@ abstract class AbstractChart
 		}
 	}
 
-	private function addXAxisLabel(string $label, float $x): void
+	protected function addXAxisLabel(string $label, float $x): void
 	{
 		$text = Text::label($label, $x, $this->height - 2);
 		$text->setAttribute('fill', '#888888');
@@ -625,7 +636,7 @@ abstract class AbstractChart
 	 * Try to guess the most suitable datetime format
 	 * depending on the time range of the chart
 	 */
-	private function guessTimeFormat(): string
+	protected function guessTimeFormat(): string
 	{
 		$diff = $this->maxX - $this->minX;
 
@@ -645,5 +656,12 @@ abstract class AbstractChart
 			// More than a year, display "YYYY"
 			return 'Y';
 		}
+	}
+
+	private function isBubbleChart(): bool
+	{
+		$className = static::class;
+		$simpleClassName = basename(str_replace('\\', '/', $className));
+		return $simpleClassName === 'BubbleChart';
 	}
 }

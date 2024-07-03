@@ -22,9 +22,12 @@ This project aims to be a complete solution for creating SVG charts in PHP. It i
 ### Pie Chart
 - Can be converted to a polar pie chart by adding a coefficient (see example below)
 
+### Bubble Chart
+- Can include a time scale
+
 ## Future Development
 
-- Bubble chart (planned)
+- Radar chart (planned)
 
 ## Installation
 ```php
@@ -76,6 +79,20 @@ use Pierresh\Simca\Charts\PieChart;
 // The secondary value is an optional coefficient for polar pie chart
 $chart = (new PieChart(400, 400))
 	->setSeries([[14, 0.5], [3, 0.9], [5, 0.8], [5, 1], [5, 0.9]])
+	->render();
+```
+```php
+use Pierresh\Simca\Charts\BubbleChart;
+
+$chart = (new BubbleChart(600, 400))
+	->setSeries([
+		['2024-06-01 08:00', 40, 30],
+		['2024-06-01 09:00', 20, 15],
+		['2024-06-01 12:00', 30, 25],
+	])
+	->setOptions([
+		'timeChart' => true,
+	])
 	->render();
 ```
 

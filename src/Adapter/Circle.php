@@ -13,8 +13,9 @@ class Circle extends SVGNodeContainer
 	static function build(
 		Dot $coord,
 		string $color = '#0b62a4',
+		float $radius = 4,
 	): SVGNodeContainer {
-		$obj = new SVGCircle($coord->x, $coord->y, 4);
+		$obj = new SVGCircle($coord->x, $coord->y, $radius);
 		$obj->setStyle('stroke', 'white');
 		$obj->setStyle('fill', $color);
 		$obj->setStyle('stroke-width', 1);
