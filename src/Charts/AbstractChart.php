@@ -127,21 +127,6 @@ abstract class AbstractChart
 		return $this->dots;
 	}
 
-	/** Render the chart as a pure SVG */
-	public function render(): string
-	{
-		return $this->generateChart();
-	}
-
-	/** Render the chart as a base64 encoded SVG image */
-	public function renderBase64(): string
-	{
-		$svg = $this->generateChart();
-
-		// prettier-ignore
-		return '<img src="data:image/svg+xml;base64,' . base64_encode($svg) . '"/>';
-	}
-
 	/**
 	 * @param array{
 	 *  numLines?: int,

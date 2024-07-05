@@ -25,9 +25,8 @@ This project aims to be a complete solution for creating SVG charts in PHP. It i
 ### Bubble Chart
 - Can include a time scale
 
-## Future Development
-
-- Radar chart (planned)
+### Radar Chart
+- Can be stacked
 
 ## Installation
 ```php
@@ -92,6 +91,28 @@ $chart = (new BubbleChart(600, 400))
 	])
 	->setOptions([
 		'timeChart' => true,
+	])
+	->render();
+```
+```php
+use Pierresh\Simca\Charts\RadarChart;
+
+$chart = (new RadarChart(600, 400))
+	->setSeries([
+		[65, 59, 90, 81, 56, 55, 40],
+		[38, 48, 40, 19, 96, 27, 100]
+	])
+	->setLabels([
+		'Eating',
+		'Drinking',
+		'Sleeping',
+		'Designing',
+		'Coding',
+		'Cycling',
+		'Running',
+	])
+	->setOptions([
+		'fillOpacity' => 0.3,
 	])
 	->render();
 ```

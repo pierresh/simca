@@ -77,8 +77,8 @@ class Helper
 	 * Helper function to prevent Rector removing option type casting,
 	 * While still keep PHPDocs of the public function setOptions()
 	 *
-	 * @param array<string,string|int|bool> $options
-	 * @return array<string,string|int|bool> $options
+	 * @param array<string,string|int|float|bool> $options
+	 * @return array<string,string|int|float|bool> $options
 	 */
 	public static function convertOptions(array $options): array {
 		return $options;

@@ -15,7 +15,7 @@ class Line extends SVGNodeContainer
 		Dot $start,
 		Dot $end,
 		string $color = 'blue',
-		float $width = 3,
+		int | float $width = 3,
 	): SVGNodeContainer {
 		$obj = new SVGLine($start->x, $start->y, $end->x, $end->y);
 		$obj->setAttribute('stroke', $color);

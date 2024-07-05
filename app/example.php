@@ -4,6 +4,7 @@ use Pierresh\Simca\Charts\LineChart;
 use Pierresh\Simca\Charts\BarChart;
 use Pierresh\Simca\Charts\BubbleChart;
 use Pierresh\Simca\Charts\PieChart;
+use Pierresh\Simca\Charts\RadarChart;
 
 $chart = (new BarChart(600, 400))
 	->setSeries([[10, 45, 30, 25], [15, 20, 15, 25], [5, 2, 10, 15]])
@@ -57,3 +58,25 @@ $chart = (new BubbleChart(600, 400))
 	->render();
 
 echo $chart;
+
+$chart = (new RadarChart(600, 400))
+	->setSeries([
+		[65, 59, 90, 81, 56, 55, 40],
+		[38, 48, 40, 19, 96, 27, 100]
+	])
+	->setLabels([
+		'Eating',
+		'Drinking',
+		'Sleeping',
+		'Designing',
+		'Coding',
+		'Cycling',
+		'Running',
+	])
+	->setOptions([
+		'fillOpacity' => 0.3,
+	])
+	->render();
+
+echo $chart;
+

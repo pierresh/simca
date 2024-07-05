@@ -49,7 +49,7 @@ class PieChart
 	}
 
 	/** Render the chart as a pure SVG */
-	public function render(): string
+	public function generateChart(): string
 	{
 		$image = SVG::build($this->width, $this->height);
 		$this->chart = $image->getDocument();
