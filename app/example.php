@@ -40,7 +40,7 @@ $chart = (new LineChart(600, 400))
 
 echo $chart;
 
-$chart = (new PieChart(400, 400))
+$chart = (new PieChart(600, 400))
 	->setSeries([[14, 0.5], [3, 0.9], [5, 0.8], [5, 1], [5, 0.9]])
 	->render();
 
@@ -54,6 +54,25 @@ $chart = (new BubbleChart(600, 400))
 	])
 	->setOptions([
 		'timeChart' => true,
+	])
+	->render();
+
+echo $chart;
+
+$chart = (new LineChart(600, 400))
+	->setSeries([[10, 45, 30, 25], [15, 20, 15, 25]])
+	->setLabels([
+		'2024-06-01 08:00',
+		'2024-06-01 09:00',
+		'2024-06-01 13:00',
+		'2024-06-01 13:30',
+	])
+	->setOptions([
+		'timeChart' => true,
+		'unitY1' => 'T',
+		'margin' => 0,
+		'stacked' => true,
+		'fillOpacity' => 0.3,
 	])
 	->render();
 

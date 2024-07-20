@@ -52,6 +52,12 @@ class LineChart extends AbstractChart
 
 	public function drawChart(): void
 	{
+		if ($this->fillOpacity > 0) {
+			foreach ($this->dots as $indexSerie => $serie) {
+				$this->addChartAreaFill($serie, $indexSerie);
+			}
+		}
+
 		foreach ($this->dots as $indexSerie => $serie) {
 			if ($this->lineType === 'straight') {
 				$this->straigthLine($serie, $indexSerie);
@@ -117,24 +123,13 @@ class LineChart extends AbstractChart
 	/** @param array<Dot> $dots */
 	private function straigthLine(array $dots, int $i): void
 	{
-		$startDot = new Dot();
+		$color = $this->getColor($i);
 
-		foreach ($dots as $dot) {
-			if (is_null($startDot->y)) {
-				$startDot = $dot;
-				continue;
-			}
+		$path = $this->handler->createStraightPath($dots);
 
-			$endDot = $dot;
+		$obj = Path::build($path, $color, 3);
 
-			$color = $this->getColor($i);
-
-			$obj = Line::build($startDot, $endDot, $color);
-
-			$this->addChild($obj);
-
-			$startDot = $dot;
-		}
+		$this->addChild($obj);
 	}
 
 	/** @param array<Dot> $dots */
@@ -147,6 +142,55 @@ class LineChart extends AbstractChart
 		$obj = Path::build($path, $color, 3);
 
 		$this->addChild($obj);
+	}
+
+	/** @param array<Dot> $dots */
+	private function addChartAreaFill(array $dots, int $index): void
+	{
+		if ($this->fillOpacity === 0) {
+			return;
+		}
+
+		$color = $this->getColor($index);
+
+		if ($this->lineType === 'straight') {
+			$pathFill = $this->handler->createStraightPath($dots);
+		} else {
+			$pathFill = $this->handler->createCurvedPath($dots);
+		}
+
+		if ($index === 0) {
+			$dot1 = new Dot(
+				$this->computeDotX($this->maxX),
+				$this->computeDotY1($this->minY1)
+			);
+			$dot2 = new Dot(
+				$this->computeDotX($this->minX),
+				$this->computeDotY1($this->minY1)
+			);
+
+			$pathFill .= ' L ' . $dot1->x . ' ' . $dot1->y;
+			$pathFill .= ' L ' . $dot2->x . ' ' . $dot2->y;
+		} else {
+			$previousSerie = $this->dots[$index - 1];
+			$lastpoint = $previousSerie[count($previousSerie) - 1];
+
+			$pathFill .= ' L ' . $lastpoint->x . ' ' . $lastpoint->y;
+
+			if ($this->lineType === 'straight') {
+				$previousPath = $this->handler->createStraightPath(array_reverse($this->dots[$index - 1]));
+			} else {
+				$previousPath = $this->handler->createCurvedPath(array_reverse($this->dots[$index - 1]));
+			}
+
+			$pathFill .= ' ' . $previousPath;
+
+			$pathFill .= ' L ' . $dots[0]->x . ' ' . $dots[0]->y;
+		}
+
+		$objFill = Path::filled($pathFill, $color, 0);
+		$objFill->setAttribute('fill-opacity', $this->fillOpacity);
+		$this->addChild($objFill);
 	}
 
 	/** @param array<Dot> $dots */

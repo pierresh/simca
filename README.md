@@ -13,11 +13,15 @@ This project aims to be a complete solution for creating SVG charts in PHP. It i
 - Can have a right axis with the `nbYkeys2` option
 
 ### Line Chart
+- Can be curved or straight
 - Can include a time scale
 - Can display objectives
 - Can display events
 - Can display a trend line
 - Can have a right axis with the `nbYkeys2` option
+
+### Area Chart
+Same as Line chart, just set the option `fillOpacity` to a value greater than 0 (i.e. 0.3);
 
 ### Pie Chart
 - Can be converted to a polar pie chart by adding a coefficient (see example below)

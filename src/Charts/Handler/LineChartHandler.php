@@ -9,6 +9,35 @@ use Pierresh\Simca\Model\Dot;
 class LineChartHandler
 {
 	/** @param array<Dot> $dots */
+	public function createStraightPath(array $dots): string
+	{
+		$path = '';
+
+		$prevCoord = new Dot();
+
+		foreach ($dots as $dot) {
+			if (is_null($dot->y)) {
+				$prevCoord = new Dot();
+				continue;
+			}
+
+			if (is_null($prevCoord->y)) {
+				$prevCoord = $dot;
+
+				$path .= 'M' . $dot->x . ',' . $dot->y;
+
+				continue;
+			}
+
+			$path .= 'L' . $dot->x . ',' . $dot->y;
+
+			$prevCoord = $dot;
+		}
+
+		return $path;
+	}
+
+	/** @param array<Dot> $dots */
 	public function createCurvedPath(array $dots): string
 	{
 		/**@var object{x:float|null, y:float|null} */

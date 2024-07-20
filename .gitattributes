@@ -1,0 +1,3 @@
+app export-ignore
+tests export-ignore
+watcher.sh export-ignore

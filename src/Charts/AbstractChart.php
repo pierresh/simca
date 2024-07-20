@@ -71,6 +71,8 @@ abstract class AbstractChart
 	/** Distance between axis and first/last value */
 	protected int $marginChart = 60;
 
+	protected int|float $fillOpacity = 0;
+
 	protected float $minX = 0;
 
 	protected float $maxX = 100;
@@ -134,6 +136,7 @@ abstract class AbstractChart
 	 *  timeChart?: bool,
 	 *  nbYkeys2?: int,
 	 *  showYAxis?: bool,
+	 *  fillOpacity?: float,
 	 *  unitY1?: string,
 	 *  unitY2?: string,
 	 * } $options
@@ -160,6 +163,10 @@ abstract class AbstractChart
 
 		if (isset($options['showYAxis'])) {
 			$this->showYAxis = (bool) $options['showYAxis'];
+		}
+
+		if (isset($options['fillOpacity'])) {
+			$this->fillOpacity = (float) $options['fillOpacity'];
 		}
 
 		if (isset($options['nbYkeys2'])) {
@@ -405,6 +412,9 @@ abstract class AbstractChart
 
 	private function drawObjective(Objective $objective, float $level): void
 	{
+		// This prevents conflict in SVG with decimal values
+		$level = (int) $level;
+
 		// prettier-ignore
 		$path = 'M' . $this->computeDotX($this->minX, 0) . ',' . $level . '.5H' . $this->computeDotX($this->maxX, 0);
 
