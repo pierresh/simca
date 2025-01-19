@@ -68,6 +68,12 @@ abstract class AbstractChart
 	/** Distance to display labels on Yaxis */
 	protected int $paddingLabel = 40;
 
+	/** Distance to display labels on Xaxis */
+	protected int $paddingLabelX = 0;
+
+	/** Angle of Xaxis labels in degrees */
+	protected int $labelAngle = 0;
+
 	/** Distance between axis and first/last value */
 	protected int $marginChart = 60;
 
@@ -139,6 +145,7 @@ abstract class AbstractChart
 	 *  fillOpacity?: float,
 	 *  unitY1?: string,
 	 *  unitY2?: string,
+	 *  labelAngle?: int,
 	 * } $options
 	 */
 	public function setOptions(array $options): self
@@ -179,6 +186,10 @@ abstract class AbstractChart
 
 		if (isset($options['unitY2'])) {
 			$this->unitY2 = (string) $options['unitY2'];
+		}
+
+		if (isset($options['labelAngle'])) {
+			$this->labelAngle = (int) $options['labelAngle'];
 		}
 
 		return $this;
@@ -289,6 +300,7 @@ abstract class AbstractChart
 			$this->computeMinMaxXaxis();
 		}
 
+		$this->adjustPaddingXLabel();
 		$this->adjustPaddingLabel();
 	}
 
@@ -311,6 +323,20 @@ abstract class AbstractChart
 		if ($this->paddingLabel < $lengthLabelMaxY2) {
 			$this->paddingLabel = $lengthLabelMaxY2;
 		}
+	}
+
+	protected function adjustPaddingXLabel(): void
+	{
+		$maxLabelLength = max(
+			array_map(
+				fn(string $label): int => strlen($label),
+				$this->labels,
+			),
+		);
+
+		$angleInRadians = ((2*M_PI) / 360) * $this->labelAngle;
+
+		$this->paddingLabelX = (int)(sin($angleInRadians) * $maxLabelLength * 10);
 	}
 
 	private function drawYaxis(): void
@@ -473,7 +499,7 @@ abstract class AbstractChart
 
 	protected function addXAxisLabel(string $label, float $x): void
 	{
-		$text = Text::label($label, $x, $this->height - 2);
+		$text = Text::label($label, $x, $this->height - $this->paddingLabelX - 2, $this->labelAngle);
 		$text->setAttribute('fill', '#888888');
 
 		$this->addChild($text);
@@ -501,20 +527,22 @@ abstract class AbstractChart
 
 	protected function computeDotY1(float $y): float
 	{
-		$height = $this->height - 2 * $this->padding;
+		$chartHeight = $this->height - $this->paddingLabelX;
+		$height = $chartHeight - 2 * $this->padding;
 
 		// prettier-ignore
-		$y1 = $this->height - $this->padding - ($height * ($y - $this->minY1)) / ($this->maxY1 - $this->minY1);
+		$y1 = $chartHeight - $this->padding - ($height * ($y - $this->minY1)) / ($this->maxY1 - $this->minY1);
 
 		return round($y1, 2);
 	}
 
 	protected function computeDotY2(float $y): float
 	{
-		$height = $this->height - 2 * $this->padding;
+		$chartHeight = $this->height - $this->paddingLabelX;
+		$height = $chartHeight - 2 * $this->padding;
 
 		// prettier-ignore
-		$y2 = $this->height - $this->padding - ($height * ($y - $this->minY2)) / ($this->maxY2 - $this->minY2);
+		$y2 = $chartHeight - $this->padding - ($height * ($y - $this->minY2)) / ($this->maxY2 - $this->minY2);
 
 		return round($y2, 2);
 	}
