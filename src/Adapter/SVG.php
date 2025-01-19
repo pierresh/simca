@@ -10,6 +10,12 @@ class SVG
 {
 	static function build(int $width, int $height): PhpSvg
 	{
-		return new PhpSvg($width, $height);
+		$svg = new PhpSvg();
+
+		$svg->getDocument()
+			->setAttribute('viewBox', '0 0 ' . $width . ' ' . $height)
+			->setAttribute('preserveAspectRatio', 'xMidYMid meet'); // equivalent of `object-fit: contain`
+
+		return $svg;
 	}
 }
