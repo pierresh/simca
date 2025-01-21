@@ -334,9 +334,7 @@ abstract class AbstractChart
 			),
 		);
 
-		$angleInRadians = ((2*M_PI) / 360) * $this->labelAngle;
-
-		$this->paddingLabelX = (int)(sin($angleInRadians) * $maxLabelLength * 10);
+		$this->paddingLabelX = (int)(sin(deg2rad($this->labelAngle)) * $maxLabelLength * 8);
 	}
 
 	private function drawYaxis(): void
