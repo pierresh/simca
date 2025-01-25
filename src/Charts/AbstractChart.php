@@ -28,6 +28,12 @@ abstract class AbstractChart
 	/** @var array<string> */
 	protected array $labels = [];
 
+	/**
+	 * Store labels diplayed on X axis - because it might be reformatted for time series
+	 * @var array<string>
+	 */
+	private array $labelsDisplayed = [];
+
 	/** @var array<Objective> */
 	protected array $objectivesY1 = [];
 
@@ -69,6 +75,12 @@ abstract class AbstractChart
 
 	/** Distance to display labels on Yaxis */
 	protected int $paddingLabel = 40;
+
+	/** Distance to display labels on Xaxis */
+	protected int $paddingLabelX = 0;
+
+	/** Angle of Xaxis labels in degrees */
+	protected int $labelAngle = 0;
 
 	/** Distance between axis and first/last value */
 	protected int $marginChart = 60;
@@ -141,6 +153,7 @@ abstract class AbstractChart
 	 *  fillOpacity?: float,
 	 *  unitY1?: string,
 	 *  unitY2?: string,
+	 *  labelAngle?: int,
 	 *  responsive?: bool,
 	 * } $options
 	 */
@@ -182,6 +195,10 @@ abstract class AbstractChart
 
 		if (isset($options['unitY2'])) {
 			$this->unitY2 = (string) $options['unitY2'];
+		}
+
+		if (isset($options['labelAngle'])) {
+			$this->labelAngle = (int) $options['labelAngle'];
 		}
 
 		if (isset($options['responsive'])) {
@@ -301,6 +318,7 @@ abstract class AbstractChart
 			$this->computeMinMaxXaxis();
 		}
 
+		$this->adjustPaddingXLabel();
 		$this->adjustPaddingLabel();
 	}
 
@@ -323,6 +341,20 @@ abstract class AbstractChart
 		if ($this->paddingLabel < $lengthLabelMaxY2) {
 			$this->paddingLabel = $lengthLabelMaxY2;
 		}
+	}
+
+	protected function adjustPaddingXLabel(): void
+	{
+		$this->computeLabelsDisplayed();
+
+		$maxLabelLength = max(
+			array_map(
+				fn(string $label): int => strlen($label),
+				$this->labelsDisplayed
+			)
+		);
+
+		$this->paddingLabelX = (int) (sin(deg2rad($this->labelAngle)) * $maxLabelLength * 7);
 	}
 
 	private function drawYaxis(): void
@@ -354,7 +386,7 @@ abstract class AbstractChart
 
 		foreach ($levels as $level) {
 			$this->addYaxis1Label($level);
-			$horizontal = $this->computeDotY1($level);
+			$horizontal = (int) $this->computeDotY1($level);
 
 			$path = 'M' . $start . ',' . $horizontal . '.5H' . $end;
 
@@ -457,6 +489,28 @@ abstract class AbstractChart
 		$this->chart->addChild($text);
 	}
 
+	/**
+	 * We need labelsDisplayed[] filled when computing adjustPaddingXLabel
+	 * A bit redundant with addXAxisLabelsTime
+	 */
+	private function computeLabelsDisplayed(): void
+	{
+		if (!$this->isTimeChart) {
+			$this->labelsDisplayed = $this->labels;
+
+			return;
+		}
+
+		$this->timeFormat = $this->guessTimeFormat();
+
+		for ($i = 0; $i < 5; $i++) {
+			$ts = $this->getTimeStampStep($i);
+			$label = date($this->timeFormat, $ts);
+
+			$this->labelsDisplayed[] = $label;
+		}
+	}
+
 	private function addXAxisLabels(): void
 	{
 		if ($this->isTimeChart) {
@@ -485,7 +539,7 @@ abstract class AbstractChart
 
 	protected function addXAxisLabel(string $label, float $x): void
 	{
-		$text = Text::label($label, $x, $this->height - 2);
+		$text = Text::label($label, $x, $this->height - $this->paddingLabelX - 2, $this->labelAngle);
 		$text->setAttribute('fill', '#888888');
 
 		$this->addChild($text);
@@ -513,20 +567,22 @@ abstract class AbstractChart
 
 	protected function computeDotY1(float $y): float
 	{
-		$height = $this->height - 2 * $this->padding;
+		$chartHeight = $this->height - $this->paddingLabelX;
+		$height = $chartHeight - 2 * $this->padding;
 
 		// prettier-ignore
-		$y1 = $this->height - $this->padding - ($height * ($y - $this->minY1)) / ($this->maxY1 - $this->minY1);
+		$y1 = $chartHeight - $this->padding - ($height * ($y - $this->minY1)) / ($this->maxY1 - $this->minY1);
 
 		return round($y1, 2);
 	}
 
 	protected function computeDotY2(float $y): float
 	{
-		$height = $this->height - 2 * $this->padding;
+		$chartHeight = $this->height - $this->paddingLabelX;
+		$height = $chartHeight - 2 * $this->padding;
 
 		// prettier-ignore
-		$y2 = $this->height - $this->padding - ($height * ($y - $this->minY2)) / ($this->maxY2 - $this->minY2);
+		$y2 = $chartHeight - $this->padding - ($height * ($y - $this->minY2)) / ($this->maxY2 - $this->minY2);
 
 		return round($y2, 2);
 	}

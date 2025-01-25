@@ -10,14 +10,22 @@ use SVG\Nodes\Texts\SVGText;
 class Text extends SVGNodeContainer
 {
 
-	static function label(string $value, float $coordX, float $coordY): SVGText
+	static function label(string $value, float $coordX, float $coordY, int $angle = 0): SVGText
 	{
 		$value = trim($value);
 
 		$text = new SVGText($value, $coordX, $coordY);
 		$text->setAttribute('font-family', 'Sans-serif');
-		$text->setStyle('text-anchor', 'middle');
 		$text->setStyle('font-size', 12);
+
+		if ($angle === 0) {
+			$text->setAttribute('text-anchor', 'middle');
+		} else {
+			$text->setAttribute('text-anchor', 'end');
+			$text->setStyle('transform-box', 'fill-box');
+			$text->setStyle('transform-origin', '100% 50%');
+			$text->setStyle('transform', 'rotate(-' . $angle . 'deg)');
+		}
 
 		return $text;
 	}

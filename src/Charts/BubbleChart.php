@@ -89,6 +89,8 @@ class BubbleChart extends AbstractChart
 			$this->minY1 = min($this->minY1, $serie[1] + 10);
 			$this->maxY1 = max($this->maxY1, $serie[1] + 10);
 		}
+
+		$this->adjustPaddingXLabel();
 	}
 
 	protected function computeMinMaxXaxis(): void

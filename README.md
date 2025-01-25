@@ -37,6 +37,7 @@ Same as Line chart, just set the option `fillOpacity` to a value greater than 0 
 - `responsive` set to `false` to disable responsive mode
 - `showYAxis` set to `false` will hide the Y axis
 - `unitY1` / `unitY2` units for the Y axes
+- `labelAngle` to rotate the labels of the X axis
 
 ## Installation
 ```php
