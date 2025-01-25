@@ -56,6 +56,8 @@ class RadarChart
 
 	protected int $numLines = 5;
 
+	protected bool $responsive = true;
+
 	/** @var array<array<Dot>> */
 	protected array $dots;
 
@@ -77,7 +79,12 @@ class RadarChart
 
 	public function generateChart(): string
 	{
-		$image = SVG::build($this->width, $this->height);
+		if ($this->responsive) {
+			$image = SVG::buildResponsive($this->width, $this->height);
+		} else {
+			$image = SVG::build($this->width, $this->height);
+		}
+
 		$this->chart = $image->getDocument();
 
 		$this->computeAngle();
@@ -104,7 +111,7 @@ class RadarChart
 	}
 
 	/**
-	 * @param array{ fillOpacity?: float, stacked?: bool } $options
+	 * @param array{ fillOpacity?: float, stacked?: bool, responsive?: bool } $options
 	 */
 	public function setOptions(array $options): self
 	{
@@ -116,6 +123,10 @@ class RadarChart
 
 		if (isset($options['stacked'])) {
 			$this->stacked = (bool) $options['stacked'];
+		}
+
+		if (isset($options['responsive'])) {
+			$this->responsive = (bool) $options['responsive'];
 		}
 
 		return $this;

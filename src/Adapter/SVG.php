@@ -10,6 +10,11 @@ class SVG
 {
 	static function build(int $width, int $height): PhpSvg
 	{
+		return new PhpSvg($width, $height);
+	}
+
+	static function buildResponsive(int $width, int $height): PhpSvg
+	{
 		$svg = new PhpSvg();
 
 		$svg->getDocument()
