@@ -28,6 +28,9 @@ abstract class AbstractChart
 	/** @var array<string> */
 	protected array $labels = [];
 
+	/** Store labels diplayed on X axis - because it might be reformatted for time series */
+	private array $labelsDisplayed = [];
+
 	/** @var array<Objective> */
 	protected array $objectivesY1 = [];
 
@@ -327,14 +330,16 @@ abstract class AbstractChart
 
 	protected function adjustPaddingXLabel(): void
 	{
+		$this->computeLabelsDisplayed();
+
 		$maxLabelLength = max(
 			array_map(
 				fn(string $label): int => strlen($label),
-				$this->labels,
-			),
+				$this->labelsDisplayed
+			)
 		);
 
-		$this->paddingLabelX = (int)(sin(deg2rad($this->labelAngle)) * $maxLabelLength * 8);
+		$this->paddingLabelX = (int) (sin(deg2rad($this->labelAngle)) * $maxLabelLength * 7);
 	}
 
 	private function drawYaxis(): void
@@ -366,7 +371,7 @@ abstract class AbstractChart
 
 		foreach ($levels as $level) {
 			$this->addYaxis1Label($level);
-			$horizontal = $this->computeDotY1($level);
+			$horizontal = (int) $this->computeDotY1($level);
 
 			$path = 'M' . $start . ',' . $horizontal . '.5H' . $end;
 
@@ -467,6 +472,28 @@ abstract class AbstractChart
 
 		$text = Text::labelRight($value, $coordX, $coordY);
 		$this->chart->addChild($text);
+	}
+
+	/**
+	 * We need labelsDisplayed[] filled when computing adjustPaddingXLabel
+	 * A bit redundant with addXAxisLabelsTime
+	 */
+	private function computeLabelsDisplayed(): void
+	{
+		if (!$this->isTimeChart) {
+			$this->labelsDisplayed = $this->labels;
+
+			return;
+		}
+
+		$this->timeFormat = $this->guessTimeFormat();
+
+		for ($i = 0; $i < 5; $i++) {
+			$ts = $this->getTimeStampStep($i);
+			$label = date($this->timeFormat, $ts);
+
+			$this->labelsDisplayed[] = $label;
+		}
 	}
 
 	private function addXAxisLabels(): void

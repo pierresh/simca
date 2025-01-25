@@ -145,6 +145,10 @@ class BarChart extends AbstractChart
 				$pointY = $dot->y + ($this->height - $this->computeDotY2($dot->value)) / 2 - 4;
 			}
 
+			if ($this->stacked) {
+				$pointY -= $this->paddingLabelX / 2;
+			}
+
 			$obj = Text::label((string) $dot->value, $pointX, $pointY);
 			$color = $this->getColor($indexSerie);
 
