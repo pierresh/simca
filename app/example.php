@@ -7,6 +7,7 @@ use Pierresh\Simca\Charts\PieChart;
 use Pierresh\Simca\Charts\RadarChart;
 
 $chart = (new BarChart(600, 400))
+	->setOptions(['responsive' => false])
 	->setSeries([[10, 45, 30, 25], [15, 20, 15, 25], [5, 2, 10, 15]])
 	->setLabels(['A', 'B', 'C', 'D'])
 	->setColors(['#2dd55b', '#ffc409', '#0054e9'])
@@ -19,6 +20,7 @@ $chart = (new BarChart(600, 400))
 echo $chart;
 
 $chart = (new LineChart(600, 400))
+	->setOptions(['responsive' => false])
 	->setSeries([[10, 45, 30, 25], [15, 20, 15, 25]])
 	->setLabels([
 		'2024-06-01 08:00',
@@ -41,12 +43,14 @@ $chart = (new LineChart(600, 400))
 echo $chart;
 
 $chart = (new PieChart(600, 400))
+	->setOptions(['responsive' => false])
 	->setSeries([[14, 0.5], [3, 0.9], [5, 0.8], [5, 1], [5, 0.9]])
 	->render();
 
 echo $chart;
 
 $chart = (new BubbleChart(600, 400))
+	->setOptions(['responsive' => false])
 	->setSeries([
 		['2024-06-01 08:00', 40, 30],
 		['2024-06-01 09:00', 20, 15],
@@ -60,6 +64,7 @@ $chart = (new BubbleChart(600, 400))
 echo $chart;
 
 $chart = (new LineChart(600, 400))
+	->setOptions(['responsive' => false])
 	->setSeries([[10, 45, 30, 25], [15, 20, 15, 25]])
 	->setLabels([
 		'2024-06-01 08:00',
@@ -79,6 +84,7 @@ $chart = (new LineChart(600, 400))
 echo $chart;
 
 $chart = (new RadarChart(600, 400))
+	->setOptions(['responsive' => false])
 	->setSeries([
 		[65, 59, 90, 81, 56, 55, 40],
 		[38, 48, 40, 19, 96, 27, 100]

@@ -54,6 +54,6 @@ trait Traits {
 		$svg = $this->generateChart();
 
 		// prettier-ignore
-		return '<img src="data:image/svg+xml;base64,' . base64_encode($svg) . '"/>';
+		return '<img src="data:image/svg+xml;base64,' . base64_encode((string) $svg) . '"/>';
 	}
 }

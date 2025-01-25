@@ -40,6 +40,8 @@ class PieChart
 
 	private float $radius = 1;
 
+	protected bool $responsive = true;
+
 	protected SVGDocumentFragment $chart;
 
 	public function __construct(
@@ -48,10 +50,27 @@ class PieChart
 	) {
 	}
 
+	/**
+	 * @param array{ responsive?: bool } $options
+	 */
+	public function setOptions(array $options): self
+	{
+		if (isset($options['responsive'])) {
+			$this->responsive = $options['responsive'];
+		}
+
+		return $this;
+	}
+
 	/** Render the chart as a pure SVG */
 	public function generateChart(): string
 	{
-		$image = SVG::build($this->width, $this->height);
+		if ($this->responsive) {
+			$image = SVG::buildResponsive($this->width, $this->height);
+		} else {
+			$image = SVG::build($this->width, $this->height);
+		}
+
 		$this->chart = $image->getDocument();
 
 		$this->computeSum();

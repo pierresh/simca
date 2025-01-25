@@ -32,6 +32,12 @@ Same as Line chart, just set the option `fillOpacity` to a value greater than 0 
 ### Radar Chart
 - Can be stacked
 
+#### Other options
+- `numLines` number of horizontal grid lines in the chart
+- `responsive` set to `false` to disable responsive mode
+- `showYAxis` set to `false` will hide the Y axis
+- `unitY1` / `unitY2` units for the Y axes
+
 ## Installation
 ```php
 composer require pierresh\simca
@@ -124,6 +130,15 @@ $chart = (new RadarChart(600, 400))
 Alternatively, you can replace `render()` with `renderBase64()` to get a base64 encoded SVG image.
 
 ## Development
+
+Clone the repository and install the dependencies:
+```bash
+git clone https://github.com/pierresh/simca
+
+cd simca
+
+composer install
+```
 
 There is a watcher script to automatically refresh the page when a change is made.
 
