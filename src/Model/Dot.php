@@ -10,6 +10,5 @@ class Dot
 		public ?float $x = null,
 		public ?float $y = null,
 		public ?float $value = null
-	) {
-	}
+	) {}
 }

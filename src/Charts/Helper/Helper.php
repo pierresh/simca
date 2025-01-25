@@ -80,7 +80,8 @@ class Helper
 	 * @param array<string,string|int|float|bool> $options
 	 * @return array<string,string|int|float|bool> $options
 	 */
-	public static function convertOptions(array $options): array {
+	public static function convertOptions(array $options): array
+	{
 		return $options;
 	}
 }

@@ -41,9 +41,7 @@ class BarChart extends AbstractChart
 		}
 	}
 
-	protected function drawXaxis(): void
-	{
-	}
+	protected function drawXaxis(): void {}
 
 	protected function computeDotXNum(int $x): float
 	{
@@ -75,9 +73,7 @@ class BarChart extends AbstractChart
 		$this->barWidth = ($this->barSizeRatio * $this->groupWidth) / $nbColumns - $this->barGap;
 	}
 
-	protected function computeMinMaxXaxis(): void
-	{
-	}
+	protected function computeMinMaxXaxis(): void {}
 
 	/** @param array<Dot> $dots */
 	private function drawBars(array $dots, int $indexSerie): void

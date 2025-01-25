@@ -1,0 +1,18 @@
+{
+	"devDependencies": {
+		"@prettier/plugin-php": "^0.22.4",
+		"husky": "^9.1.7",
+		"lint-staged": "^15.4.2",
+		"prettier": "^3.4.2"
+	},
+	"lint-staged": {
+		"*.*": [
+			"php -l",
+			"npx prettier --ignore-unknown --write",
+			"git add"
+		]
+	},
+	"scripts": {
+		"prepare": "husky install"
+	}
+}

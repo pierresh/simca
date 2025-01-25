@@ -1,46 +1,52 @@
 {
-    "name": "pierresh/simca",
-    "description": "SVG charts for PHP",
-    "keywords": ["chart", "charts", "svg"],
-    "license": "MIT",
-    "type": "library",
-    "autoload": {
-        "psr-4": {
-            "Pierresh\\Simca\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Pierre Clavequin"
-        }
-    ],
-    "require": {
-        "php": ">=8.1",
-        "ext-intl": "*",
-        "meyfa/php-svg": "^0.15.0"
-    },
-    "require-dev": {
-        "pestphp/pest": "^2.34",
-        "pestphp/pest-plugin-watch": "^2.1",
-        "phpmd/phpmd": "^2.15",
-        "phpstan/phpstan": "^1.11",
-        "rector/rector": "^1.1",
-        "symfony/error-handler": "^7.1"
-    },
-    "config": {
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
-    },
-    "scripts": {
-        "refactor": "rector",
-        "test": "./vendor/bin/pest --watch",
-        "test-one-run": "./vendor/bin/pest",
-        "stan": "./vendor/bin/phpstan analyse --ansi ",
-        "quality": [
-            "@refactor --dry-run",
-            "@stan",
-            "@test-one-run"
-        ]
-    }
+	"name": "pierresh/simca",
+	"description": "SVG charts for PHP",
+	"keywords": [
+		"chart",
+		"charts",
+		"svg"
+	],
+	"license": "MIT",
+	"type": "library",
+	"autoload": {
+		"psr-4": {
+			"Pierresh\\Simca\\": "src/"
+		}
+	},
+	"authors": [
+		{
+			"name": "Pierre Clavequin"
+		}
+	],
+	"require": {
+		"php": ">=8.1",
+		"ext-intl": "*",
+		"meyfa/php-svg": "^0.15.0"
+	},
+	"require-dev": {
+		"pestphp/pest": "^2.34",
+		"pestphp/pest-plugin-watch": "^2.1",
+		"phpmd/phpmd": "^2.15",
+		"phpstan/phpstan": "^1.11",
+		"rector/rector": "^1.1",
+		"symfony/error-handler": "^7.1"
+	},
+	"config": {
+		"allow-plugins": {
+			"pestphp/pest-plugin": true
+		}
+	},
+	"scripts": {
+		"refactor": "rector",
+		"test": "./vendor/bin/pest --watch",
+		"test-one-run": "./vendor/bin/pest",
+		"stan": "./vendor/bin/phpstan analyse --ansi ",
+		"format": "npx prettier --write ./src ./tests | grep -v 'unchanged' | xargs",
+		"quality": [
+			"@refactor --dry-run",
+			"@stan",
+			"@format",
+			"@test-one-run"
+		]
+	}
 }

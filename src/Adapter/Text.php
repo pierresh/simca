@@ -9,9 +9,12 @@ use SVG\Nodes\Texts\SVGText;
 
 class Text extends SVGNodeContainer
 {
-
-	static function label(string $value, float $coordX, float $coordY, int $angle = 0): SVGText
-	{
+	static function label(
+		string $value,
+		float $coordX,
+		float $coordY,
+		int $angle = 0
+	): SVGText {
 		$value = trim($value);
 
 		$text = new SVGText($value, $coordX, $coordY);
@@ -47,8 +50,11 @@ class Text extends SVGNodeContainer
 		return $obj;
 	}
 
-	static function labelRight(string $value, float $coordX, float $coordY): SVGText
-	{
+	static function labelRight(
+		string $value,
+		float $coordX,
+		float $coordY
+	): SVGText {
 		$value = trim($value);
 
 		$obj = new SVGText($value, $coordX, $coordY);

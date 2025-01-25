@@ -10,6 +10,5 @@ class Objective
 		public float $value,
 		public string $color,
 		public float $width
-	) {
-	}
+	) {}
 }

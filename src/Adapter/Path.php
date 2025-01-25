@@ -12,7 +12,7 @@ class Path extends SVGNodeContainer
 	static function build(
 		string $path,
 		string $color = '#aaaaaa',
-		int | float $width = 0.5
+		int|float $width = 0.5
 	): SVGNodeContainer {
 		$obj = new SVGPath($path);
 		$obj->setAttribute('stroke', $color);
@@ -25,7 +25,7 @@ class Path extends SVGNodeContainer
 	static function filled(
 		string $path,
 		string $color = '#aaaaaa',
-		int | float $width = 0.5
+		int|float $width = 0.5
 	): SVGNodeContainer {
 		$obj = self::build($path, $color, $width);
 		$obj->setAttribute('fill', $color);

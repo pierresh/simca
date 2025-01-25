@@ -36,7 +36,7 @@ class BubbleChart extends AbstractChart
 	protected function computeLabels(): void
 	{
 		$this->labels = [];
-		foreach ($this->series as  $serie) {
+		foreach ($this->series as $serie) {
 			$this->labels[] = (string) $serie[0];
 		}
 	}
@@ -45,11 +45,12 @@ class BubbleChart extends AbstractChart
 	{
 		foreach ($this->series as $indexSerie => $serie) {
 			if ($this->isTimeChart) {
-				$ts = (float) Helper::convertLabelToTimestamp((string) $serie[0]);
+				$ts = (float) Helper::convertLabelToTimestamp(
+					(string) $serie[0]
+				);
 			} else {
 				$ts = $serie[0];
 			}
-
 
 			$x = $this->computeDotX($ts);
 			$y = $this->computeDotY1($serie[1]);
@@ -100,7 +101,9 @@ class BubbleChart extends AbstractChart
 
 		foreach ($this->series as $serie) {
 			if ($this->isTimeChart) {
-				$timestamp = Helper::convertLabelToTimestamp((string) $serie[0]);
+				$timestamp = Helper::convertLabelToTimestamp(
+					(string) $serie[0]
+				);
 			} else {
 				$timestamp = $serie[0];
 			}

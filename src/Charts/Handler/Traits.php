@@ -9,7 +9,8 @@ use SVG\Nodes\SVGNode;
 /**
  * @phpstan-import-type Serie from \Pierresh\Simca\Charts\AbstractChart
  */
-trait Traits {
+trait Traits
+{
 	/** @param array<Serie> $series */
 	public function setSeries(array $series): self
 	{

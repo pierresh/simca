@@ -178,9 +178,13 @@ class LineChart extends AbstractChart
 			$pathFill .= ' L ' . $lastpoint->x . ' ' . $lastpoint->y;
 
 			if ($this->lineType === 'straight') {
-				$previousPath = $this->handler->createStraightPath(array_reverse($this->dots[$index - 1]));
+				$previousPath = $this->handler->createStraightPath(
+					array_reverse($this->dots[$index - 1])
+				);
 			} else {
-				$previousPath = $this->handler->createCurvedPath(array_reverse($this->dots[$index - 1]));
+				$previousPath = $this->handler->createCurvedPath(
+					array_reverse($this->dots[$index - 1])
+				);
 			}
 
 			$pathFill .= ' ' . $previousPath;

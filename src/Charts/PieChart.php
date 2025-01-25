@@ -47,8 +47,7 @@ class PieChart
 	public function __construct(
 		protected readonly int $width = 500,
 		protected readonly int $height = 400
-	) {
-	}
+	) {}
 
 	/**
 	 * @param array{ responsive?: bool } $options

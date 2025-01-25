@@ -251,9 +251,7 @@ abstract class AbstractChart
 
 	abstract protected function computeMinMaxXaxis(): void;
 
-	protected function computeLabels(): void
-	{
-	}
+	protected function computeLabels(): void {}
 
 	protected function computeMinMax(): void
 	{
@@ -354,7 +352,8 @@ abstract class AbstractChart
 			)
 		);
 
-		$this->paddingLabelX = (int) (sin(deg2rad($this->labelAngle)) * $maxLabelLength * 7);
+		$this->paddingLabelX =
+			(int) (sin(deg2rad($this->labelAngle)) * $maxLabelLength * 7);
 	}
 
 	private function drawYaxis(): void
@@ -539,7 +538,12 @@ abstract class AbstractChart
 
 	protected function addXAxisLabel(string $label, float $x): void
 	{
-		$text = Text::label($label, $x, $this->height - $this->paddingLabelX - 2, $this->labelAngle);
+		$text = Text::label(
+			$label,
+			$x,
+			$this->height - $this->paddingLabelX - 2,
+			$this->labelAngle
+		);
 		$text->setAttribute('fill', '#888888');
 
 		$this->addChild($text);
