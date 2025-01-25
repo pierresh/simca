@@ -388,6 +388,10 @@ class RadarChart
 				}
 			}
 
+			if ($sum === []) {
+				return;
+			}
+
 			$this->max = max($sum);
 
 			$this->max = (new Grid())->maxGridValue(
@@ -397,6 +401,10 @@ class RadarChart
 			);
 		} else {
 			foreach ($this->series as $serie) {
+				if ($serie === []) {
+					return;
+				}
+
 				$this->max = max($this->max, max($serie));
 			}
 		}

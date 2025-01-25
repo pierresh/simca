@@ -43,8 +43,8 @@
 		"stan": "./vendor/bin/phpstan analyse --ansi ",
 		"format": "npx prettier --write ./src ./tests | grep -v 'unchanged' | xargs",
 		"quality": [
-			"@refactor --dry-run",
 			"@stan",
+			"@refactor --dry-run",
 			"@format",
 			"@test-one-run"
 		]

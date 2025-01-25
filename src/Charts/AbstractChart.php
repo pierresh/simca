@@ -278,6 +278,10 @@ abstract class AbstractChart
 			}
 		} else {
 			foreach ($this->series as $indexSerie => $serie) {
+				if ($serie === []) {
+					continue;
+				}
+
 				if ($this->leftAxis($indexSerie)) {
 					$this->minY1 = min($this->minY1, min($serie));
 					$this->maxY1 = max($this->maxY1, max($serie));
@@ -344,6 +348,10 @@ abstract class AbstractChart
 	protected function adjustPaddingXLabel(): void
 	{
 		$this->computeLabelsDisplayed();
+
+		if ($this->labelsDisplayed === []) {
+			return;
+		}
 
 		$maxLabelLength = max(
 			array_map(

@@ -5,14 +5,19 @@
 		"lint-staged": "^15.4.2",
 		"prettier": "^3.4.2"
 	},
-	"lint-staged": {
-		"*.*": [
-			"php -l",
-			"npx prettier --ignore-unknown --write",
-			"git add"
-		]
-	},
 	"scripts": {
-		"prepare": "husky install"
+		"phpstan": "composer exec -- phpstan analyse",
+		"rector": "composer exec -- rector process",
+		"prettier": "npx prettier --write ./src ./tests",
+		"test": "composer exec -- pest"
+	},
+	"lint-staged": {
+		"*.php": [
+			"php -l",
+			"npm run phpstan",
+			"npm run rector",
+			"npm run prettier",
+			"npm run test"
+		]
 	}
 }
