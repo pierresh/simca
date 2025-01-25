@@ -51,6 +51,8 @@ abstract class AbstractChart
 
 	protected string $unitY2 = '';
 
+	protected bool $responsive = true;
+
 	/** @var array<string> */
 	protected array $colors = [
 		'#3B91C3',
@@ -149,6 +151,7 @@ abstract class AbstractChart
 	 *  unitY1?: string,
 	 *  unitY2?: string,
 	 *  labelAngle?: int,
+	 *  responsive?: bool,
 	 * } $options
 	 */
 	public function setOptions(array $options): self
@@ -195,12 +198,21 @@ abstract class AbstractChart
 			$this->labelAngle = (int) $options['labelAngle'];
 		}
 
+		if (isset($options['responsive'])) {
+			$this->responsive = (bool) $options['responsive'];
+		}
+
 		return $this;
 	}
 
 	protected function generateChart(): string
 	{
-		$image = SVG::build($this->width, $this->height);
+		if ($this->responsive) {
+			$image = SVG::buildResponsive($this->width, $this->height);
+		} else {
+			$image = SVG::build($this->width, $this->height);
+		}
+
 		$this->chart = $image->getDocument();
 
 		if ($this->isBubbleChart()) {

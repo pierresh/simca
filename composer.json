@@ -16,6 +16,7 @@
     ],
     "require": {
         "php": ">=8.1",
+        "ext-intl": "*",
         "meyfa/php-svg": "^0.15.0"
     },
     "require-dev": {
