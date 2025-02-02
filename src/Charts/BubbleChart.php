@@ -76,33 +76,4 @@ class BubbleChart extends AbstractChart
 
 		$this->addChild($obj);
 	}
-
-	protected function computeMinMax(): void
-	{
-		$this->minY1 = 0;
-		$this->maxY1 = 0;
-
-		foreach ($this->series as $serie) {
-			$this->minY1 = min($this->minY1, $serie[1] + 10);
-			$this->maxY1 = max($this->maxY1, $serie[1] + 10);
-		}
-
-		$this->adjustPaddingXLabel();
-	}
-
-	protected function computeDotXNum(int $x): float
-	{
-		$paddingLabel = $this->paddingLabel;
-		if ($this->has2Yaxis()) {
-			$paddingLabel = 2 * $this->paddingLabel;
-		}
-
-		// prettier-ignore
-		$width = $this->width - 2 * $this->padding - $paddingLabel - $this->marginChart * 2;
-
-		// prettier-ignore
-		$x = $this->padding + $this->paddingLabel + $this->marginChart + ($width * $x) / (count($this->labels) - 1);
-
-		return round($x, 2);
-	}
 }

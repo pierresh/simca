@@ -11,6 +11,7 @@ use Pierresh\Simca\Adapter\Circle;
 use Pierresh\Simca\Adapter\Line;
 use Pierresh\Simca\Adapter\Text;
 use Pierresh\Simca\Adapter\Path;
+use Pierresh\Simca\Charts\Axis\YAxis\YAxisStandard;
 use Pierresh\Simca\Charts\Handler\Traits;
 use Pierresh\Simca\Charts\Helper\Helper;
 use Pierresh\Simca\Model\Dot;
@@ -55,6 +56,9 @@ class RadarChart
 	private bool $stacked = false;
 
 	protected int $numLines = 5;
+
+	/** @var float[] */
+	private array $levels = [];
 
 	protected bool $responsive = true;
 
@@ -305,13 +309,7 @@ class RadarChart
 
 	private function drawGridLines(): void
 	{
-		$lines = (new Grid())->autoGridLines(
-			$this->min,
-			$this->max,
-			$this->numLines
-		);
-
-		foreach ($lines as $line) {
+		foreach ($this->levels as $line) {
 			$this->drawGridSegment($line);
 		}
 	}
@@ -393,12 +391,6 @@ class RadarChart
 			}
 
 			$this->max = max($sum);
-
-			$this->max = (new Grid())->maxGridValue(
-				$this->min,
-				$this->max,
-				$this->numLines
-			);
 		} else {
 			foreach ($this->series as $serie) {
 				if ($serie === []) {
@@ -408,5 +400,13 @@ class RadarChart
 				$this->max = max($this->max, max($serie));
 			}
 		}
+
+		$this->levels = YAxisStandard::computeGridLines(
+			$this->min,
+			$this->max,
+			$this->numLines
+		);
+
+		$this->max = $this->levels[count($this->levels) - 1];
 	}
 }

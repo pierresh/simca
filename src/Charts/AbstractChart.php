@@ -7,7 +7,6 @@ namespace Pierresh\Simca\Charts;
 use SVG\Nodes\Structures\SVGDocumentFragment;
 
 use Pierresh\Simca\Model\Dot;
-use Pierresh\Simca\Charts\Grid;
 use Pierresh\Simca\Model\Objective;
 use Pierresh\Simca\Adapter\SVG;
 use Pierresh\Simca\Adapter\Text;
@@ -15,6 +14,8 @@ use Pierresh\Simca\Adapter\Path;
 use Pierresh\Simca\Charts\Axis\XAxis\XAxisInterface;
 use Pierresh\Simca\Charts\Axis\XAxis\XAxisStandard;
 use Pierresh\Simca\Charts\Axis\XAxis\XAxisTime;
+use Pierresh\Simca\Charts\Axis\YAxis\YAxisInterface;
+use Pierresh\Simca\Charts\Axis\YAxis\YAxisStandard;
 use Pierresh\Simca\Charts\Helper\Helper;
 use Pierresh\Simca\Charts\Handler\Traits;
 
@@ -65,8 +66,6 @@ abstract class AbstractChart
 
 	protected SVGDocumentFragment $chart;
 
-	protected Grid $grid;
-
 	/** Distance around the chart */
 	protected int $padding = 20;
 
@@ -84,13 +83,9 @@ abstract class AbstractChart
 
 	protected int|float $fillOpacity = 0;
 
-	protected float $minY1 = 0;
+	protected YAxisInterface $yAxis1;
 
-	protected float $maxY1 = 100;
-
-	protected float $minY2;
-
-	protected float $maxY2;
+	protected YAxisInterface $yAxis2;
 
 	/** @var array<array<Dot>> */
 	protected array $dots;
@@ -114,9 +109,7 @@ abstract class AbstractChart
 	public function __construct(
 		protected readonly int $width = 500,
 		protected readonly int $height = 400
-	) {
-		$this->grid = new Grid();
-	}
+	) {}
 
 	/** @param array<string> $labels */
 	public function setLabels(array $labels): self
@@ -215,6 +208,30 @@ abstract class AbstractChart
 			$this->xAxis = new XAxisStandard($this->labels);
 		}
 
+		if ($this->nbYkeys2 === 0) {
+			$seriesAxis1 = $this->series;
+		} else {
+			$seriesAxis1 = array_slice($this->series, 0, -$this->nbYkeys2);
+		}
+
+		$this->yAxis1 = new YAxisStandard(
+			$this->labels,
+			$seriesAxis1,
+			$this->objectivesY1,
+			$this->stacked
+		);
+
+		if ($this->nbYkeys2 > 0) {
+			$seriesAxis2 = array_slice($this->series, -$this->nbYkeys2);
+
+			$this->yAxis2 = new YAxisStandard(
+				$this->labels,
+				$seriesAxis2,
+				$this->objectivesY2,
+				$this->stacked
+			);
+		}
+
 		if ($this->responsive) {
 			$image = SVG::buildResponsive($this->width, $this->height);
 		} else {
@@ -225,9 +242,7 @@ abstract class AbstractChart
 
 		$this->computeMinMax();
 
-		if ($this->showYAxis) {
-			$this->drawYaxis();
-		}
+		$this->drawYaxis();
 
 		$this->drawXaxis();
 
@@ -252,74 +267,14 @@ abstract class AbstractChart
 
 	protected function computeMinMax(): void
 	{
-		$this->minY1 = 0;
-		$this->maxY1 = 0.1;
-
-		$this->minY2 = 0;
-		$this->maxY2 = 0.1;
-
-		if ($this->stacked) {
-			foreach ($this->labels as $indexLabel => $label) {
-				$tmpCumulY1 = 0;
-				$tmpCumulY2 = 0;
-				foreach ($this->series as $indexSerie => $serie) {
-					if ($this->leftAxis($indexSerie)) {
-						$tmpCumulY1 += $serie[$indexLabel];
-					} else {
-						$tmpCumulY2 += $serie[$indexLabel];
-					}
-				}
-
-				$this->maxY1 = max($this->maxY1, $tmpCumulY1);
-				$this->maxY2 = max($this->maxY2, $tmpCumulY2);
-			}
-		} else {
-			foreach ($this->series as $indexSerie => $serie) {
-				if ($serie === []) {
-					continue;
-				}
-
-				if ($this->leftAxis($indexSerie)) {
-					$this->minY1 = min($this->minY1, min($serie));
-					$this->maxY1 = max($this->maxY1, max($serie));
-				} else {
-					$this->minY2 = min($this->minY2, min($serie));
-					$this->maxY2 = max($this->maxY2, max($serie));
-				}
-			}
-		}
-
-		foreach ($this->objectivesY1 as $objective) {
-			$this->minY1 = min($this->minY1, $objective->value);
-			$this->maxY1 = max($this->maxY1, $objective->value);
-		}
-
-		foreach ($this->objectivesY2 as $objective) {
-			$this->minY2 = min($this->minY2, $objective->value);
-			$this->maxY2 = max($this->maxY2, $objective->value);
-		}
-
-		$this->maxY1 = $this->grid->maxGridValue(
-			$this->minY1,
-			$this->maxY1,
-			$this->numLines
-		);
-
-		if ($this->has2Yaxis()) {
-			$this->maxY2 = $this->grid->maxGridValue(
-				$this->minY2,
-				$this->maxY2,
-				$this->numLines
-			);
-		}
-
 		$this->adjustPaddingXLabel();
 		$this->adjustPaddingLabel();
 	}
 
 	protected function adjustPaddingLabel(): void
 	{
-		$labelMaxY1 = Helper::format($this->maxY1) . ' ' . $this->unitY1;
+		// prettier-ignore
+		$labelMaxY1 = Helper::format($this->yAxis1->getMaxY()) . ' ' . $this->yAxis1->getUnit();
 		$lengthLabelMaxY1 = strlen($labelMaxY1) * 6;
 
 		if ($this->paddingLabel < $lengthLabelMaxY1) {
@@ -330,7 +285,8 @@ abstract class AbstractChart
 			return;
 		}
 
-		$labelMaxY2 = Helper::format($this->maxY2) . ' ' . $this->unitY2;
+		// prettier-ignore
+		$labelMaxY2 = Helper::format($this->yAxis2->getMaxY()) . ' ' . $this->yAxis2->getUnit();
 		$lengthLabelMaxY2 = strlen($labelMaxY2) * 6;
 
 		if ($this->paddingLabel < $lengthLabelMaxY2) {
@@ -359,9 +315,13 @@ abstract class AbstractChart
 
 	private function drawYaxis(): void
 	{
-		$start = $this->computeDotY1($this->minY1);
+		if (!$this->showYAxis) {
+			return;
+		}
 
-		$end = $this->computeDotY1($this->maxY1);
+		$start = $this->computeDotY1($this->yAxis1->getMinY());
+
+		$end = $this->computeDotY1($this->yAxis1->getMaxY());
 
 		$vertical = $this->computeDotX($this->xAxis->getMinX());
 
@@ -378,11 +338,7 @@ abstract class AbstractChart
 
 		$end = $this->computeDotX($this->xAxis->getMaxX(), 0);
 
-		$levels = $this->grid->autoGridLines(
-			$this->minY1,
-			$this->maxY1,
-			$this->numLines
-		);
+		$levels = $this->yAxis1->autoGridLines($this->numLines);
 
 		foreach ($levels as $level) {
 			$this->addYaxis1Label($level);
@@ -404,11 +360,7 @@ abstract class AbstractChart
 
 	private function displayYaxis2Labels(): void
 	{
-		$levels2 = $this->grid->autoGridLines(
-			$this->minY2,
-			$this->maxY2,
-			$this->numLines
-		);
+		$levels2 = $this->yAxis2->autoGridLines($this->numLines);
 
 		foreach ($levels2 as $level) {
 			$this->addYaxis2Label($level);
@@ -472,7 +424,7 @@ abstract class AbstractChart
 		$coordY = $this->computeDotY1($value);
 		$coordX = $this->paddingLabel;
 
-		$value = Helper::format($value) . ' ' . $this->unitY1;
+		$value = Helper::format($value) . ' ' . $this->yAxis1->getUnit();
 
 		$text = Text::labelLeft($value, $coordX, $coordY);
 		$this->chart->addChild($text);
@@ -483,7 +435,7 @@ abstract class AbstractChart
 		$coordY = $this->computeDotY2($value);
 		$coordX = $this->width - $this->paddingLabel;
 
-		$value = Helper::format($value) . ' ' . $this->unitY2;
+		$value = Helper::format($value) . ' ' . $this->yAxis2->getUnit();
 
 		$text = Text::labelRight($value, $coordX, $coordY);
 		$this->chart->addChild($text);
@@ -538,7 +490,7 @@ abstract class AbstractChart
 		$height = $chartHeight - 2 * $this->padding;
 
 		// prettier-ignore
-		$y1 = $chartHeight - $this->padding - ($height * ($y - $this->minY1)) / ($this->maxY1 - $this->minY1);
+		$y1 = $chartHeight - $this->padding - $height * $this->yAxis1->convertYValue($y);
 
 		return round($y1, 2);
 	}
@@ -549,7 +501,7 @@ abstract class AbstractChart
 		$height = $chartHeight - 2 * $this->padding;
 
 		// prettier-ignore
-		$y2 = $chartHeight - $this->padding - ($height * ($y - $this->minY2)) / ($this->maxY2 - $this->minY2);
+		$y2 = $chartHeight - $this->padding - $height * $this->yAxis2->convertYValue($y);
 
 		return round($y2, 2);
 	}

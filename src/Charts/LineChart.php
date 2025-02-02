@@ -81,8 +81,14 @@ class LineChart extends AbstractChart
 	{
 		foreach ($this->events as $event) {
 			$x = $this->computeDotX($event);
-			$startDot = new Dot($x, $this->computeDotY1($this->minY1));
-			$endDot = new Dot($x, $this->computeDotY1($this->maxY1));
+			$startDot = new Dot(
+				$x,
+				$this->computeDotY1($this->yAxis1->getMinY())
+			);
+			$endDot = new Dot(
+				$x,
+				$this->computeDotY1($this->yAxis1->getMaxY())
+			);
 
 			$obj = Line::build($startDot, $endDot, '#273646', 1.5);
 			$this->addChild($obj);
@@ -162,11 +168,11 @@ class LineChart extends AbstractChart
 		if ($index === 0) {
 			$dot1 = new Dot(
 				$this->computeDotX($this->xAxis->getMaxX()),
-				$this->computeDotY1($this->minY1)
+				$this->computeDotY1($this->yAxis1->getMinY())
 			);
 			$dot2 = new Dot(
 				$this->computeDotX($this->xAxis->getMinX()),
-				$this->computeDotY1($this->minY1)
+				$this->computeDotY1($this->yAxis1->getMinY())
 			);
 
 			$pathFill .= ' L ' . $dot1->x . ' ' . $dot1->y;
