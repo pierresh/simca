@@ -12,6 +12,9 @@ use Pierresh\Simca\Model\Objective;
 use Pierresh\Simca\Adapter\SVG;
 use Pierresh\Simca\Adapter\Text;
 use Pierresh\Simca\Adapter\Path;
+use Pierresh\Simca\Charts\Axis\XAxis\XAxisInterface;
+use Pierresh\Simca\Charts\Axis\XAxis\XAxisStandard;
+use Pierresh\Simca\Charts\Axis\XAxis\XAxisTime;
 use Pierresh\Simca\Charts\Helper\Helper;
 use Pierresh\Simca\Charts\Handler\Traits;
 
@@ -27,12 +30,6 @@ abstract class AbstractChart
 
 	/** @var array<string> */
 	protected array $labels = [];
-
-	/**
-	 * Store labels diplayed on X axis - because it might be reformatted for time series
-	 * @var array<string>
-	 */
-	private array $labelsDisplayed = [];
 
 	/** @var array<Objective> */
 	protected array $objectivesY1 = [];
@@ -87,10 +84,6 @@ abstract class AbstractChart
 
 	protected int|float $fillOpacity = 0;
 
-	protected float $minX = 0;
-
-	protected float $maxX = 100;
-
 	protected float $minY1 = 0;
 
 	protected float $maxY1 = 100;
@@ -115,6 +108,8 @@ abstract class AbstractChart
 	 * @var array<int, float>
 	 */
 	private array $tmpStackedY2 = [];
+
+	protected XAxisInterface $xAxis;
 
 	public function __construct(
 		protected readonly int $width = 500,
@@ -210,6 +205,16 @@ abstract class AbstractChart
 
 	protected function generateChart(): string
 	{
+		if ($this->isBubbleChart()) {
+			$this->computeLabels();
+		}
+
+		if ($this->isTimeChart) {
+			$this->xAxis = new XAxisTime($this->labels);
+		} else {
+			$this->xAxis = new XAxisStandard($this->labels);
+		}
+
 		if ($this->responsive) {
 			$image = SVG::buildResponsive($this->width, $this->height);
 		} else {
@@ -217,10 +222,6 @@ abstract class AbstractChart
 		}
 
 		$this->chart = $image->getDocument();
-
-		if ($this->isBubbleChart()) {
-			$this->computeLabels();
-		}
 
 		$this->computeMinMax();
 
@@ -246,10 +247,6 @@ abstract class AbstractChart
 	}
 
 	abstract protected function drawChart(): void;
-
-	abstract protected function computeDotXNum(int $x): float;
-
-	abstract protected function computeMinMaxXaxis(): void;
 
 	protected function computeLabels(): void {}
 
@@ -316,10 +313,6 @@ abstract class AbstractChart
 			);
 		}
 
-		if ($this->isTimeChart) {
-			$this->computeMinMaxXaxis();
-		}
-
 		$this->adjustPaddingXLabel();
 		$this->adjustPaddingLabel();
 	}
@@ -347,16 +340,16 @@ abstract class AbstractChart
 
 	protected function adjustPaddingXLabel(): void
 	{
-		$this->computeLabelsDisplayed();
+		$this->xAxis->computeLabelsDisplayed();
 
-		if ($this->labelsDisplayed === []) {
+		if ($this->xAxis->getLabelsDisplayed() === []) {
 			return;
 		}
 
 		$maxLabelLength = max(
 			array_map(
 				fn(string $label): int => strlen($label),
-				$this->labelsDisplayed
+				$this->xAxis->getLabelsDisplayed()
 			)
 		);
 
@@ -370,7 +363,7 @@ abstract class AbstractChart
 
 		$end = $this->computeDotY1($this->maxY1);
 
-		$vertical = $this->computeDotX($this->minX);
+		$vertical = $this->computeDotX($this->xAxis->getMinX());
 
 		$path = 'M' . $vertical . '.5,' . $start . 'V' . $end;
 
@@ -381,9 +374,9 @@ abstract class AbstractChart
 
 	private function drawXaxis(): void
 	{
-		$start = $this->computeDotX($this->minX, 0);
+		$start = $this->computeDotX($this->xAxis->getMinX(), 0);
 
-		$end = $this->computeDotX($this->maxX, 0);
+		$end = $this->computeDotX($this->xAxis->getMaxX(), 0);
 
 		$levels = $this->grid->autoGridLines(
 			$this->minY1,
@@ -445,7 +438,7 @@ abstract class AbstractChart
 		Objective $objective,
 		float $level
 	): void {
-		$x = $this->computeDotX($this->minX, 0);
+		$x = $this->computeDotX($this->xAxis->getMinX(), 0);
 		$text = Text::labelRight((string) $objective->value, $x, $level - 8);
 		$text->setAttribute('fill', $objective->color);
 		$this->chart->addChild($text);
@@ -455,7 +448,7 @@ abstract class AbstractChart
 		Objective $objective,
 		float $level
 	): void {
-		$x = $this->computeDotX($this->maxX);
+		$x = $this->computeDotX($this->xAxis->getMaxX());
 		$text = Text::labelLeft((string) $objective->value, $x, $level - 8);
 		$text->setAttribute('fill', $objective->color);
 		$this->chart->addChild($text);
@@ -467,7 +460,7 @@ abstract class AbstractChart
 		$level = (int) $level;
 
 		// prettier-ignore
-		$path = 'M' . $this->computeDotX($this->minX, 0) . ',' . $level . '.5H' . $this->computeDotX($this->maxX, 0);
+		$path = 'M' . $this->computeDotX($this->xAxis->getMinX(), 0) . ',' . $level . '.5H' . $this->computeDotX($this->xAxis->getMaxX(), 0);
 
 		$obj = Path::build($path, $objective->color, $objective->width);
 
@@ -496,51 +489,13 @@ abstract class AbstractChart
 		$this->chart->addChild($text);
 	}
 
-	/**
-	 * We need labelsDisplayed[] filled when computing adjustPaddingXLabel
-	 * A bit redundant with addXAxisLabelsTime
-	 */
-	private function computeLabelsDisplayed(): void
-	{
-		if (!$this->isTimeChart) {
-			$this->labelsDisplayed = $this->labels;
-
-			return;
-		}
-
-		$this->timeFormat = $this->guessTimeFormat();
-
-		for ($i = 0; $i < 5; $i++) {
-			$ts = $this->getTimeStampStep($i);
-			$label = date($this->timeFormat, $ts);
-
-			$this->labelsDisplayed[] = $label;
-		}
-	}
-
 	private function addXAxisLabels(): void
 	{
-		if ($this->isTimeChart) {
-			$this->addXAxisLabelsTime();
-			return;
-		}
+		$xLabels = $this->xAxis->getXLabelsPosition();
 
-		foreach ($this->labels as $index => $label) {
-			$x = $this->computeDotXNum($index);
-			$this->addXAxisLabel($label, $x);
-		}
-	}
-
-	private function addXAxisLabelsTime(): void
-	{
-		$this->timeFormat = $this->guessTimeFormat();
-
-		for ($i = 0; $i < 5; $i++) {
-			$ts = $this->getTimeStampStep($i);
-			$label = date($this->timeFormat, $ts);
-			$x = $this->computeDotX($ts);
-
-			$this->addXAxisLabel($label, $x);
+		foreach ($xLabels as $xLabel) {
+			$x = $this->computeDotX($xLabel->index);
+			$this->addXAxisLabel($xLabel->label, $x);
 		}
 	}
 
@@ -572,7 +527,7 @@ abstract class AbstractChart
 		$width = $this->width - 2 * $this->padding - $paddingLabel - $margin * 2;
 
 		// prettier-ignore
-		$x = $this->padding + $this->paddingLabel + $margin + ($width * ($x - $this->minX)) / ($this->maxX - $this->minX);
+		$x = $this->padding + $this->paddingLabel + $margin + $width * $this->xAxis->convertXValue($x);
 
 		return round($x, 2);
 	}
@@ -646,7 +601,7 @@ abstract class AbstractChart
 				$t = Helper::convertLabelToTimestamp($this->labels[$index]);
 				$x = $this->computeDotX($t);
 			} else {
-				$x = $this->computeDotXNum($index);
+				$x = $this->computeDotX($index);
 			}
 
 			$dot = new Dot($x, $val, $displayedValue);
@@ -694,43 +649,6 @@ abstract class AbstractChart
 	protected function has2Yaxis(): bool
 	{
 		return $this->nbYkeys2 > 0;
-	}
-
-	private function getTimeStampStep(int $index): int
-	{
-		$duration = $this->maxX - $this->minX;
-
-		$step = $duration / count($this->labels);
-
-		$total = $this->minX + $index * $step;
-
-		return (int) $total;
-	}
-
-	/**
-	 * Try to guess the most suitable datetime format
-	 * depending on the time range of the chart
-	 */
-	protected function guessTimeFormat(): string
-	{
-		$diff = $this->maxX - $this->minX;
-
-		if ($diff < 24 * 60 * 60) {
-			// Less than 24 hours, display H:i (hours and minutes)
-			return 'H:i';
-		} elseif ($diff < 7 * 24 * 60 * 60) {
-			// Less than a week, display "day H:i"
-			return 'D H:i';
-		} elseif ($diff < 90 * 24 * 60 * 60) {
-			// Less than 3 months, display "YYYY-MM-DD H:i"
-			return 'Y-m-d H:i';
-		} elseif ($diff < 365 * 24 * 60 * 60) {
-			// Less than a year, display "YYYY-MM-DD"
-			return 'Y-m-d';
-		} else {
-			// More than a year, display "YYYY"
-			return 'Y';
-		}
 	}
 
 	private function isBubbleChart(): bool

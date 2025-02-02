@@ -26,11 +26,7 @@ class BubbleChart extends AbstractChart
 	{
 		$this->computeMinMax();
 
-		$this->computeMinMaxXaxis();
-
 		$this->drawBubbles();
-
-		$this->addXAxisLabelsTime();
 	}
 
 	protected function computeLabels(): void
@@ -94,51 +90,6 @@ class BubbleChart extends AbstractChart
 		$this->adjustPaddingXLabel();
 	}
 
-	protected function computeMinMaxXaxis(): void
-	{
-		$minX = null;
-		$maxX = null;
-
-		foreach ($this->series as $serie) {
-			if ($this->isTimeChart) {
-				$timestamp = Helper::convertLabelToTimestamp(
-					(string) $serie[0]
-				);
-			} else {
-				$timestamp = $serie[0];
-			}
-
-			if (is_null($minX)) {
-				$minX = $timestamp;
-			}
-
-			if (is_null($maxX)) {
-				$maxX = $timestamp;
-			}
-
-			$minX = min($minX, $timestamp);
-			$maxX = max($maxX, $timestamp);
-		}
-
-		$this->minX = (float) $minX;
-		$this->maxX = (float) $maxX;
-	}
-
-	private function addXAxisLabelsTime(): void
-	{
-		if ($this->isTimeChart) {
-			return;
-		}
-
-		for ($i = 0; $i < 5; $i++) {
-			$ts = $this->getTimeStampStep($i);
-
-			$x = $this->computeDotX($ts);
-
-			$this->addXAxisLabel((string) $ts, $x);
-		}
-	}
-
 	protected function computeDotXNum(int $x): float
 	{
 		$paddingLabel = $this->paddingLabel;
@@ -153,14 +104,5 @@ class BubbleChart extends AbstractChart
 		$x = $this->padding + $this->paddingLabel + $this->marginChart + ($width * $x) / (count($this->labels) - 1);
 
 		return round($x, 2);
-	}
-
-	private function getTimeStampStep(int $index): float
-	{
-		$duration = $this->maxX - $this->minX;
-
-		$step = $duration / 4;
-
-		return $this->minX + $index * $step;
 	}
 }

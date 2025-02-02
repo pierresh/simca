@@ -41,9 +41,7 @@ class BarChart extends AbstractChart
 		}
 	}
 
-	protected function drawXaxis(): void {}
-
-	protected function computeDotXNum(int $x): float
+	protected function computeDotX(float $x, float $margin = null): float
 	{
 		$this->computeGroupWidth();
 

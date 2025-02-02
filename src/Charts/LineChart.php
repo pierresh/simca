@@ -95,8 +95,8 @@ class LineChart extends AbstractChart
 			return;
 		}
 
-		$startTrend = $this->computeDotX($this->minX, 0);
-		$endTrend = $this->computeDotX($this->maxX, 0);
+		$startTrend = $this->computeDotX($this->xAxis->getMinX(), 0);
+		$endTrend = $this->computeDotX($this->xAxis->getMaxX(), 0);
 
 		foreach ($this->dots as $indexSerie => $serie) {
 			$trend = $this->handler->computeTrendLine(
@@ -161,11 +161,11 @@ class LineChart extends AbstractChart
 
 		if ($index === 0) {
 			$dot1 = new Dot(
-				$this->computeDotX($this->maxX),
+				$this->computeDotX($this->xAxis->getMaxX()),
 				$this->computeDotY1($this->minY1)
 			);
 			$dot2 = new Dot(
-				$this->computeDotX($this->minX),
+				$this->computeDotX($this->xAxis->getMinX()),
 				$this->computeDotY1($this->minY1)
 			);
 
@@ -223,50 +223,5 @@ class LineChart extends AbstractChart
 
 			$this->addChild($obj);
 		}
-	}
-
-	protected function computeDotXNum(int $x): float
-	{
-		$paddingLabel = $this->paddingLabel;
-		if ($this->has2Yaxis()) {
-			$paddingLabel = 2 * $this->paddingLabel;
-		}
-
-		// prettier-ignore
-		$width = $this->width - 2 * $this->padding - $paddingLabel - $this->marginChart * 2;
-
-		// prettier-ignore
-		$x = $this->padding + $this->paddingLabel + $this->marginChart + ($width * $x) / (count($this->labels) - 1);
-
-		return round($x, 2);
-	}
-
-	protected function computeMinMaxXaxis(): void
-	{
-		$minX = null;
-		$maxX = null;
-
-		foreach ($this->labels as $label) {
-			$timestamp = Helper::convertLabelToTimestamp($label);
-
-			if (is_null($minX)) {
-				$minX = $timestamp;
-			}
-
-			if (is_null($maxX)) {
-				$maxX = $timestamp;
-			}
-
-			if ($minX > $timestamp) {
-				$minX = $timestamp;
-			}
-
-			if ($maxX < $timestamp) {
-				$maxX = $timestamp;
-			}
-		}
-
-		$this->minX = (float) $minX;
-		$this->maxX = (float) $maxX;
 	}
 }
