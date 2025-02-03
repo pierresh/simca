@@ -25,7 +25,7 @@ class LineChart extends AbstractChart
 
 	private readonly LineChartHandler $handler;
 
-	/** @var array<float> */
+	/** @var number[] */
 	private array $events = [];
 
 	public function __construct(int $width = 500, int $height = 400)
@@ -126,7 +126,7 @@ class LineChart extends AbstractChart
 		return $this;
 	}
 
-	/** @param array<Dot> $dots */
+	/** @param Dot[] $dots */
 	private function straigthLine(array $dots, int $i): void
 	{
 		$color = $this->getColor($i);
@@ -138,7 +138,7 @@ class LineChart extends AbstractChart
 		$this->addChild($obj);
 	}
 
-	/** @param array<Dot> $dots */
+	/** @param Dot[] $dots */
 	private function curvedLine(array $dots, int $index): void
 	{
 		$path = $this->handler->createCurvedPath($dots);
@@ -150,7 +150,7 @@ class LineChart extends AbstractChart
 		$this->addChild($obj);
 	}
 
-	/** @param array<Dot> $dots */
+	/** @param Dot[] $dots */
 	private function addChartAreaFill(array $dots, int $index): void
 	{
 		if ($this->fillOpacity === 0) {
@@ -203,7 +203,7 @@ class LineChart extends AbstractChart
 		$this->addChild($objFill);
 	}
 
-	/** @param array<Dot> $dots */
+	/** @param Dot[] $dots */
 	private function addCircle(array $dots, int $index): void
 	{
 		foreach ($dots as $dot) {
@@ -215,7 +215,7 @@ class LineChart extends AbstractChart
 		}
 	}
 
-	/** @param array<Dot> $dots */
+	/** @param Dot[] $dots */
 	private function addLabels(array $dots): void
 	{
 		foreach ($dots as $dot) {

@@ -15,16 +15,16 @@ use Pierresh\Simca\Charts\Handler\Traits;
 use Pierresh\Simca\Model\Dot;
 
 /**
- * @phpstan-type Serie array<int, float>
+ * @phpstan-type Serie number[]
  */
 class PieChart
 {
 	use Traits;
 
-	/** @var array<Serie> */
+	/** @var Serie[] */
 	protected array $series = [];
 
-	/** @var array<string> */
+	/** @var string[] */
 	protected array $colors = [
 		'#3B91C3',
 		'#6BC6B6',

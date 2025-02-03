@@ -5,7 +5,7 @@ namespace Pierresh\Simca\Charts\Axis\YAxis;
 use Pierresh\Simca\Model\Objective;
 
 /**
- * @phpstan-type Serie array<int, float>
+ * @phpstan-type Serie number[]
  */
 class YAxisStandard implements YAxisInterface
 {
@@ -16,9 +16,9 @@ class YAxisStandard implements YAxisInterface
 	private string $unit = '';
 
 	/**
-	 * @param array<string> $labels
-	 * @param array<Serie> $series
-	 * @param array<Objective> $objectives
+	 * @param string[] $labels
+	 * @param Serie[] $series
+	 * @param Objective[] $objectives
 	 */
 	public function __construct(
 		private readonly array $labels,

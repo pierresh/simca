@@ -13,7 +13,7 @@ class XAxisStandard implements XAxisInterface
 	/** @var string[] $labelsDisplayed */
 	private array $labelsDisplayed = [];
 
-	/** @param array<string> $labels */
+	/** @param string[] $labels */
 	public function __construct(private readonly array $labels)
 	{
 		$this->maxX = count($labels) - 1;

@@ -19,7 +19,7 @@ class XAxisTime implements XAxisInterface
 
 	private string $timeFormat = 'Y-m-d H:i';
 
-	/** @param array<string> $labels */
+	/** @param string[] $labels */
 	public function __construct(private readonly array $labels)
 	{
 		$this->computeMinMaxXaxis();

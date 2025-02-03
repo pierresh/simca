@@ -11,7 +11,7 @@ use SVG\Nodes\SVGNode;
  */
 trait Traits
 {
-	/** @param array<Serie> $series */
+	/** @param Serie[] $series */
 	public function setSeries(array $series): self
 	{
 		$this->series = $series;
@@ -19,7 +19,7 @@ trait Traits
 		return $this;
 	}
 
-	/** @param array<string> $colors */
+	/** @param string[] $colors */
 	public function setColors(array $colors): self
 	{
 		if ($colors === []) {

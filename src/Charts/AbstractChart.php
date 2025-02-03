@@ -20,22 +20,22 @@ use Pierresh\Simca\Charts\Helper\Helper;
 use Pierresh\Simca\Charts\Handler\Traits;
 
 /**
- * @phpstan-type Serie array<int, float>
+ * @phpstan-type Serie number[]
  */
 abstract class AbstractChart
 {
 	use Traits;
 
-	/** @var array<Serie> */
+	/** @var Serie[] */
 	protected array $series = [];
 
-	/** @var array<string> */
+	/** @var string[] */
 	protected array $labels = [];
 
-	/** @var array<Objective> */
+	/** @var Objective[] */
 	protected array $objectivesY1 = [];
 
-	/** @var array<Objective> */
+	/** @var Objective[] */
 	protected array $objectivesY2 = [];
 
 	protected bool $isTimeChart = false;
@@ -54,7 +54,7 @@ abstract class AbstractChart
 
 	protected bool $responsive = true;
 
-	/** @var array<string> */
+	/** @var string[] */
 	protected array $colors = [
 		'#3B91C3',
 		'#6BC6B6',
@@ -87,20 +87,20 @@ abstract class AbstractChart
 
 	protected YAxisInterface $yAxis2;
 
-	/** @var array<array<Dot>> */
+	/** @var Dot[][] */
 	protected array $dots;
 
 	protected string $timeFormat = 'Y-m-d H:i';
 
 	/**
 	 * Buffer to compute stacked values on axis Y1
-	 * @var array<int, float>
+	 * @var number[]
 	 */
 	private array $tmpStackedY1 = [];
 
 	/**
 	 * Buffer to compute stacked values on axis Y2
-	 * @var array<int, float>
+	 * @var number[]
 	 */
 	private array $tmpStackedY2 = [];
 
@@ -111,7 +111,7 @@ abstract class AbstractChart
 		protected readonly int $height = 400
 	) {}
 
-	/** @param array<string> $labels */
+	/** @param string[] $labels */
 	public function setLabels(array $labels): self
 	{
 		$this->labels = $labels;
@@ -122,7 +122,7 @@ abstract class AbstractChart
 	/**
 	 * Public method for acceptance tests
 	 *
-	 * @return array<array<Dot>>
+	 * @return Dot[][]
 	 */
 	public function getDots(): array
 	{

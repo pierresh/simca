@@ -73,7 +73,7 @@ class BarChart extends AbstractChart
 
 	protected function computeMinMaxXaxis(): void {}
 
-	/** @param array<Dot> $dots */
+	/** @param Dot[] $dots */
 	private function drawBars(array $dots, int $indexSerie): void
 	{
 		$val = $this->computeDotY1(0);
@@ -111,7 +111,7 @@ class BarChart extends AbstractChart
 		}
 	}
 
-	/** @param array<Dot> $dots */
+	/** @param Dot[] $dots */
 	private function addLabels(array $dots, int $indexSerie): void
 	{
 		foreach ($dots as $dot) {

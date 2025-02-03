@@ -8,7 +8,7 @@ use Pierresh\Simca\Model\Dot;
 
 class LineChartHandler
 {
-	/** @param array<Dot> $dots */
+	/** @param Dot[] $dots */
 	public function createStraightPath(array $dots): string
 	{
 		$path = '';
@@ -37,7 +37,7 @@ class LineChartHandler
 		return $path;
 	}
 
-	/** @param array<Dot> $dots */
+	/** @param Dot[] $dots */
 	public function createCurvedPath(array $dots): string
 	{
 		/**@var object{x:float|null, y:float|null} */
@@ -82,8 +82,8 @@ class LineChartHandler
 	}
 
 	/**
-	 * @param array<Dot> $dots
-	 * @return array<float|null>
+	 * @param Dot[] $dots
+	 * @return (float|null)[]
 	 */
 	private function gradients(array $dots): array
 	{
@@ -117,7 +117,7 @@ class LineChartHandler
 	}
 
 	/**
-	 * @param array<Dot> $dots
+	 * @param Dot[] $dots
 	 * @return array{startDot: Dot, endDot: Dot}
 	 */
 	public function computeTrendLine(

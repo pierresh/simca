@@ -17,19 +17,19 @@ use Pierresh\Simca\Charts\Helper\Helper;
 use Pierresh\Simca\Model\Dot;
 
 /**
- * @phpstan-type Serie array<int, float>
+ * @phpstan-type Serie number[]
  */
 class RadarChart
 {
 	use Traits;
 
-	/** @var array<Serie> */
+	/** @var Serie[] */
 	protected array $series = [];
 
-	/** @var array<string> */
+	/** @var string[] */
 	protected array $labels = [];
 
-	/** @var array<string> */
+	/** @var string[] */
 	protected array $colors = [
 		'#3B91C3',
 		'#6BC6B6',
@@ -62,12 +62,12 @@ class RadarChart
 
 	protected bool $responsive = true;
 
-	/** @var array<array<Dot>> */
+	/** @var Dot[][] */
 	protected array $dots;
 
 	/**
 	 * Buffer to compute stacked values
-	 * @var array<int, float>
+	 * @var number[]
 	 */
 	private array $tmpStacked = [];
 
