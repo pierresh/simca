@@ -5,40 +5,36 @@ declare(strict_types=1);
 namespace Pierresh\Simca\Charts\Helper;
 
 use Exception;
-use NumberFormatter;
 
 class Helper
 {
 	/**
 	 * Number formatter for data labels
-	 * Took from Laravel Illuminate\Support\Number
+	 * inspired from Laravel Illuminate\Support\Number but without requiring intl extension
 	 */
 	public static function format(
 		int|float $number,
 		?int $precision = null,
 		?int $maxPrecision = null
 	): string {
-		$formatter = new NumberFormatter('en', NumberFormatter::DECIMAL);
-
 		if (!is_null($maxPrecision)) {
-			$formatter->setAttribute(
-				NumberFormatter::MAX_FRACTION_DIGITS,
-				$maxPrecision
-			);
+			$decimals = $maxPrecision;
 		} elseif (!is_null($precision)) {
-			$formatter->setAttribute(
-				NumberFormatter::FRACTION_DIGITS,
-				$precision
-			);
+			$decimals = $precision;
+		} else {
+			// Default: 2 decimal places for floats, 0 for integers
+			$decimals = is_float($number) && $number !== floor($number) ? 2 : 0;
 		}
 
-		$formatted = $formatter->format($number);
+		$formatted = number_format($number, $decimals, '.', ',');
 
-		if (!$formatted) {
-			return (string) $number;
+		// If using maxPrecision, remove trailing zeros
+		if (!is_null($maxPrecision)) {
+			$formatted = rtrim($formatted, '0');
+			$formatted = rtrim($formatted, '.');
 		}
 
-		return (string) $formatted;
+		return $formatted;
 	}
 
 	public static function convertLabelToTimestamp(string $label): int

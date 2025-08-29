@@ -111,8 +111,12 @@ class LineChartHandler
 		return $grads;
 	}
 
-	private function grad(Dot $dotA, Dot $dotB): float
+	private function grad(Dot $dotA, Dot $dotB): ?float
 	{
+		if ($dotA->x === $dotB->x) {
+			return null;
+		}
+
 		return ($dotA->y - $dotB->y) / ($dotA->x - $dotB->x);
 	}
 

@@ -111,8 +111,8 @@ class XAxisTime implements XAxisInterface
 			// Less than a week, display "day H:i"
 			$this->timeFormat = 'D H:i';
 		} elseif ($diff < 90 * 24 * 60 * 60) {
-			// Less than 3 months, display "YYYY-MM-DD H:i"
-			$this->timeFormat = 'Y-m-d H:i';
+			// Less than 3 months, display "MM-DD H:i"
+			$this->timeFormat = 'm-d H:i';
 		} elseif ($diff < 365 * 24 * 60 * 60) {
 			// Less than a year, display "YYYY-MM-DD"
 			$this->timeFormat = 'Y-m-d';
@@ -131,7 +131,7 @@ class XAxisTime implements XAxisInterface
 	{
 		$duration = $this->getMaxX() - $this->getMinX();
 
-		$step = $duration / count($this->labels);
+		$step = $duration / 4;
 
 		$total = $this->getMinX() + $index * $step;
 

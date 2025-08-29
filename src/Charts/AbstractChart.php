@@ -315,6 +315,12 @@ abstract class AbstractChart
 
 	private function drawYaxis(): void
 	{
+		$this->yAxis1->setUnit($this->unitY1);
+
+		if ($this->nbYkeys2 > 0) {
+			$this->yAxis2->setUnit($this->unitY2);
+		}
+
 		if (!$this->showYAxis) {
 			return;
 		}
