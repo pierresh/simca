@@ -20,6 +20,9 @@ use Pierresh\Simca\Charts\Axis\YAxis\YAxisStandard;
 use Pierresh\Simca\Charts\Helper\Helper;
 use Pierresh\Simca\Charts\Helper\PathBuilder;
 use Pierresh\Simca\Charts\Handler\Traits;
+use Pierresh\Simca\Exception\InvalidChartDataException;
+use Pierresh\Simca\Exception\InvalidChartOptionsException;
+use Pierresh\Simca\Exception\ChartConfigurationException;
 
 /**
  * @phpstan-type Serie (int|float)[]
@@ -136,6 +139,10 @@ abstract class AbstractChart
 	/** @param string[] $labels */
 	public function setLabels(array $labels): self
 	{
+		if ($labels === []) {
+			throw InvalidChartDataException::emptyLabels();
+		}
+
 		$this->labels = $labels;
 
 		return $this;
@@ -172,7 +179,11 @@ abstract class AbstractChart
 		$options = Helper::convertOptions($options);
 
 		if (isset($options['numLines'])) {
-			$this->numLines = (int) $options['numLines'];
+			$value = (int) $options['numLines'];
+			if ($value <= 0) {
+				throw InvalidChartOptionsException::invalidNumLines($value);
+			}
+			$this->numLines = $value;
 		}
 
 		if (isset($options['stacked'])) {
@@ -184,7 +195,11 @@ abstract class AbstractChart
 		}
 
 		if (isset($options['margin'])) {
-			$this->marginChart = (int) $options['margin'];
+			$value = (int) $options['margin'];
+			if ($value < 0) {
+				throw InvalidChartOptionsException::invalidMargin($value);
+			}
+			$this->marginChart = $value;
 		}
 
 		if (isset($options['showYAxis'])) {
@@ -192,11 +207,19 @@ abstract class AbstractChart
 		}
 
 		if (isset($options['fillOpacity'])) {
-			$this->fillOpacity = (float) $options['fillOpacity'];
+			$value = (float) $options['fillOpacity'];
+			if ($value < 0 || $value > 1) {
+				throw InvalidChartOptionsException::invalidFillOpacity($value);
+			}
+			$this->fillOpacity = $value;
 		}
 
 		if (isset($options['nbYkeys2'])) {
-			$this->nbYkeys2 = (int) $options['nbYkeys2'];
+			$value = (int) $options['nbYkeys2'];
+			if ($value < 0) {
+				throw InvalidChartOptionsException::invalidNbYkeys2($value);
+			}
+			$this->nbYkeys2 = $value;
 		}
 
 		if (isset($options['unitY1'])) {
@@ -208,7 +231,11 @@ abstract class AbstractChart
 		}
 
 		if (isset($options['labelAngle'])) {
-			$this->labelAngle = (int) $options['labelAngle'];
+			$value = (int) $options['labelAngle'];
+			if ($value < -90 || $value > 90) {
+				throw InvalidChartOptionsException::invalidLabelAngle($value);
+			}
+			$this->labelAngle = $value;
 		}
 
 		if (isset($options['responsive'])) {
@@ -220,6 +247,8 @@ abstract class AbstractChart
 
 	protected function generateChart(): string
 	{
+		$this->validateChartConfiguration();
+
 		if ($this->isBubbleChart()) {
 			$this->computeLabels();
 		}
@@ -662,5 +691,41 @@ abstract class AbstractChart
 	private function isBubbleChart(): bool
 	{
 		return $this instanceof BubbleChart;
+	}
+
+	private function validateChartConfiguration(): void
+	{
+		if ($this->series === []) {
+			throw InvalidChartDataException::emptySeries();
+		}
+
+		if (!$this->isBubbleChart() && $this->labels === []) {
+			throw InvalidChartDataException::emptyLabels();
+		}
+
+		if ($this->nbYkeys2 > count($this->series)) {
+			throw ChartConfigurationException::tooManyYkeys2(
+				$this->nbYkeys2,
+				count($this->series)
+			);
+		}
+
+		if (!$this->isBubbleChart()) {
+			$this->validateSeriesLength();
+		}
+	}
+
+	private function validateSeriesLength(): void
+	{
+		$expectedLength = count($this->labels);
+
+		foreach ($this->series as $serie) {
+			if (count($serie) !== $expectedLength) {
+				throw InvalidChartDataException::mismatchedSeriesLength(
+					$expectedLength,
+					count($serie)
+				);
+			}
+		}
 	}
 }
