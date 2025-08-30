@@ -21,6 +21,14 @@ class PieChart
 {
 	use Traits;
 
+	// Pie chart constants
+	private const SLICE_GAP = 3;
+	private const LABEL_VERTICAL_OFFSET = 5;
+	private const LABEL_RADIUS_OFFSET = 10;
+	private const PIE_RADIUS_MARGIN = 40;
+	private const DEFAULT_BORDER_WIDTH = 1;
+	private const WHITE_COLOR = '#ffffff';
+
 	/** @var Serie[] */
 	protected array $series = [];
 
@@ -36,7 +44,7 @@ class PieChart
 
 	private float $sum = 0;
 
-	private float $gap = 3;
+	private float $gap = self::SLICE_GAP;
 
 	private float $radius = 1;
 
@@ -106,7 +114,7 @@ class PieChart
 			$borderWidth = 0;
 
 			if ((int) $this->gap === 0) {
-				$borderWidth = 1;
+				$borderWidth = self::DEFAULT_BORDER_WIDTH;
 			}
 
 			$path = Path::filled(
@@ -135,7 +143,12 @@ class PieChart
 				$center->y + sin(deg2rad($startAngle)) * $this->radius
 			);
 
-			$path = Line::build($center, $endPoint, '#ffffff', $this->gap);
+			$path = Line::build(
+				$center,
+				$endPoint,
+				self::WHITE_COLOR,
+				$this->gap
+			);
 
 			$this->addChild($path);
 
@@ -154,10 +167,13 @@ class PieChart
 
 			$angle = $startAngle + ($endAngle - $startAngle) / 2;
 
-			$radius = $this->getPolarRadius($serie) + 10;
+			$radius = $this->getPolarRadius($serie) + self::LABEL_RADIUS_OFFSET;
 
 			$posX = $center->x + cos(deg2rad($angle)) * $radius;
-			$posY = $center->y + sin(deg2rad($angle)) * $radius + 5;
+			$posY =
+				$center->y +
+				sin(deg2rad($angle)) * $radius +
+				self::LABEL_VERTICAL_OFFSET;
 
 			$obj = Text::label((string) $serie[0], $posX, $posY);
 
@@ -182,7 +198,11 @@ class PieChart
 
 	private function computeRadius(): void
 	{
-		$this->radius = min($this->width - 40, $this->height - 40) / 2;
+		$this->radius =
+			min(
+				$this->width - self::PIE_RADIUS_MARGIN,
+				$this->height - self::PIE_RADIUS_MARGIN
+			) / 2;
 	}
 
 	/** @param Serie $serie */

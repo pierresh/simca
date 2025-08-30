@@ -9,6 +9,9 @@ use Pierresh\Simca\Model\Objective;
  */
 class YAxisStandard implements YAxisInterface
 {
+	// Minimum Y-axis value to prevent division by zero
+	private const MIN_Y_AXIS_VALUE = 0.1;
+
 	private float $minY;
 
 	private float $maxY;
@@ -52,7 +55,7 @@ class YAxisStandard implements YAxisInterface
 	private function computeMinMax(): void
 	{
 		$this->minY = 0;
-		$this->maxY = 0.1;
+		$this->maxY = self::MIN_Y_AXIS_VALUE;
 
 		if ($this->stacked) {
 			foreach ($this->labels as $indexLabel => $label) {

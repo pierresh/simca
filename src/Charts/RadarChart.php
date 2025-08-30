@@ -23,6 +23,22 @@ class RadarChart
 {
 	use Traits;
 
+	// Radar chart constants
+	private const DEFAULT_FILL_OPACITY = 0.25;
+	private const DEFAULT_START_ANGLE = 270;
+	private const DEFAULT_GRID_LINES = 5;
+	private const DEFAULT_CIRCLE_RADIUS = 2.5;
+	private const DEFAULT_PATH_WIDTH = 2;
+	private const LABEL_OFFSET = 5;
+	private const FIRST_LABEL_OFFSET = 15;
+	private const RADIUS_MARGIN = 50;
+	private const FULL_CIRCLE_DEGREES = 360;
+	private const GRID_LINE_COLOR = '#e5e5e5';
+	private const GRID_AXIS_COLOR = '#dddddd';
+	private const AXIS_LINE_WIDTH = 1.5;
+	private const GRID_LINE_WIDTH = 1;
+	private const DARK_TEXT_COLOR = '#666666';
+
 	/** @var Serie[] */
 	protected array $series = [];
 
@@ -49,13 +65,13 @@ class RadarChart
 
 	private float $max = 0;
 
-	private float $fillOpacity = 0.25;
+	private float $fillOpacity = self::DEFAULT_FILL_OPACITY;
 
-	private float $startAngle = 270;
+	private float $startAngle = self::DEFAULT_START_ANGLE;
 
 	private bool $stacked = false;
 
-	protected int $numLines = 5;
+	protected int $numLines = self::DEFAULT_GRID_LINES;
 
 	/** @var float[] */
 	private array $levels = [];
@@ -222,7 +238,7 @@ class RadarChart
 		foreach ($dotSerie as $dot) {
 			$color = $this->getColor($indexDotSerie);
 
-			$circle = Circle::build($dot, $color, 2.5);
+			$circle = Circle::build($dot, $color, self::DEFAULT_CIRCLE_RADIUS);
 
 			$this->addChild($circle);
 		}
@@ -245,7 +261,11 @@ class RadarChart
 	{
 		$svg = $this->computeRadarPath($dotSerie);
 
-		$path = Path::build($svg, $this->getColor($indexDotSerie), 2);
+		$path = Path::build(
+			$svg,
+			$this->getColor($indexDotSerie),
+			self::DEFAULT_PATH_WIDTH
+		);
 
 		$this->addChild($path);
 	}
@@ -283,15 +303,15 @@ class RadarChart
 
 		// prettier-ignore
 		foreach ($this->labels as $label) {
-			$offset = 5;
+			$offset = self::LABEL_OFFSET;
 			if ((int) $currentAngle === (int) $this->startAngle) {
-				$offset = 15;
+				$offset = self::FIRST_LABEL_OFFSET;
 			}
 
 			$dot = $this->computeDot($currentAngle, $this->max, $offset);
 
 			$obj = Text::label($label, (float) $dot->x, (float) $dot->y);
-			$obj->setAttribute('fill', '#666666');
+			$obj->setAttribute('fill', self::DARK_TEXT_COLOR);
 
 			if ((int) $currentAngle === (int) $this->startAngle) {
 				$obj->setStyle('text-anchor', 'middle');
@@ -325,14 +345,19 @@ class RadarChart
 
 			$endDot = $this->computeDot($currentAngle, $value);
 
-			$path = Line::build($startDot, $endDot, '#e5e5e5', 1);
+			$path = Line::build(
+				$startDot,
+				$endDot,
+				self::GRID_LINE_COLOR,
+				self::GRID_LINE_WIDTH
+			);
 
 			$this->addChild($path);
 
 			if ($i === 0) {
 				// prettier-ignore
 				$obj = Text::label((string) $value, (float) $startDot->x, (float) $startDot->y);
-				$obj->setAttribute('fill', '#666666');
+				$obj->setAttribute('fill', self::DARK_TEXT_COLOR);
 				$this->addChild($obj);
 			}
 		}
@@ -350,7 +375,12 @@ class RadarChart
 		for ($i = 0; $i < $this->nbAxis; $i++) {
 			$endPoint = $this->computeDot($currentAngle, $this->max);
 
-			$path = Line::build($this->center, $endPoint, '#dddddd', 1.5);
+			$path = Line::build(
+				$this->center,
+				$endPoint,
+				self::GRID_AXIS_COLOR,
+				self::AXIS_LINE_WIDTH
+			);
 
 			$this->addChild($path);
 
@@ -365,13 +395,17 @@ class RadarChart
 
 	private function computeRadius(): void
 	{
-		$this->radius = min($this->width - 50, $this->height - 50) / 2;
+		$this->radius =
+			min(
+				$this->width - self::RADIUS_MARGIN,
+				$this->height - self::RADIUS_MARGIN
+			) / 2;
 	}
 
 	private function computeAngle(): void
 	{
 		$this->nbAxis = count($this->series[0]);
-		$this->angle = 360 / $this->nbAxis;
+		$this->angle = self::FULL_CIRCLE_DEGREES / $this->nbAxis;
 	}
 
 	private function computeMax(): void

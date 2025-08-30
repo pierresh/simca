@@ -9,6 +9,11 @@ use SVG\Nodes\Texts\SVGText;
 
 class Text extends SVGNodeContainer
 {
+	// Text styling constants
+	private const DEFAULT_FONT_SIZE = 12;
+	private const TRANSFORM_ORIGIN = '100% 50%';
+	private const DEFAULT_TEXT_COLOR = '#888888';
+
 	static function label(
 		string $value,
 		float $coordX,
@@ -19,14 +24,14 @@ class Text extends SVGNodeContainer
 
 		$text = new SVGText($value, $coordX, $coordY);
 		$text->setAttribute('font-family', 'Sans-serif');
-		$text->setStyle('font-size', 12);
+		$text->setStyle('font-size', self::DEFAULT_FONT_SIZE);
 
 		if ($angle === 0) {
 			$text->setAttribute('text-anchor', 'middle');
 		} else {
 			$text->setAttribute('text-anchor', 'end');
 			$text->setStyle('transform-box', 'fill-box');
-			$text->setStyle('transform-origin', '100% 50%');
+			$text->setStyle('transform-origin', self::TRANSFORM_ORIGIN);
 			$text->setStyle('transform', 'rotate(-' . $angle . 'deg)');
 		}
 
@@ -44,8 +49,8 @@ class Text extends SVGNodeContainer
 		$obj->setAttribute('font-family', 'Sans-serif');
 		$obj->setAttribute('text-anchor', 'end');
 		$obj->setAttribute('alignment-baseline', 'middle');
-		$obj->setAttribute('font-size', 12);
-		$obj->setAttribute('fill', '#888888');
+		$obj->setAttribute('font-size', self::DEFAULT_FONT_SIZE);
+		$obj->setAttribute('fill', self::DEFAULT_TEXT_COLOR);
 
 		return $obj;
 	}
@@ -61,8 +66,8 @@ class Text extends SVGNodeContainer
 		$obj->setAttribute('font-family', 'Sans-serif');
 		$obj->setAttribute('text-anchor', 'start');
 		$obj->setAttribute('alignment-baseline', 'middle');
-		$obj->setAttribute('font-size', 12);
-		$obj->setAttribute('fill', '#888888');
+		$obj->setAttribute('font-size', self::DEFAULT_FONT_SIZE);
+		$obj->setAttribute('fill', self::DEFAULT_TEXT_COLOR);
 
 		return $obj;
 	}

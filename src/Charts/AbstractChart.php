@@ -26,6 +26,26 @@ abstract class AbstractChart
 {
 	use Traits;
 
+	// Chart dimension constants
+	private const DEFAULT_WIDTH = 500;
+	private const DEFAULT_HEIGHT = 400;
+
+	// Layout constants
+	private const CHART_PADDING = 20;
+	private const Y_AXIS_LABEL_PADDING = 40;
+	private const AXIS_MARGIN = 60;
+	private const DEFAULT_GRID_LINES = 5;
+
+	// Label calculation constants
+	private const CHAR_WIDTH_MULTIPLIER = 6;
+	private const LABEL_LENGTH_MULTIPLIER = 7;
+
+	// Text color constants
+	private const DEFAULT_TEXT_COLOR = '#888888';
+
+	// Objective label offset
+	private const OBJECTIVE_LABEL_OFFSET = 8;
+
 	/** @var Serie[] */
 	protected array $series = [];
 
@@ -42,7 +62,7 @@ abstract class AbstractChart
 
 	protected int $nbYkeys2 = 0;
 
-	protected int $numLines = 5;
+	protected int $numLines = self::DEFAULT_GRID_LINES;
 
 	protected bool $showYAxis = false;
 
@@ -67,10 +87,10 @@ abstract class AbstractChart
 	protected SVGDocumentFragment $chart;
 
 	/** Distance around the chart */
-	protected int $padding = 20;
+	protected int $padding = self::CHART_PADDING;
 
 	/** Distance to display labels on Yaxis */
-	protected int $paddingLabel = 40;
+	protected int $paddingLabel = self::Y_AXIS_LABEL_PADDING;
 
 	/** Distance to display labels on Xaxis */
 	protected int $paddingLabelX = 0;
@@ -79,7 +99,7 @@ abstract class AbstractChart
 	protected int $labelAngle = 0;
 
 	/** Distance between axis and first/last value */
-	protected int $marginChart = 60;
+	protected int $marginChart = self::AXIS_MARGIN;
 
 	protected int|float $fillOpacity = 0;
 
@@ -107,8 +127,8 @@ abstract class AbstractChart
 	protected XAxisInterface $xAxis;
 
 	public function __construct(
-		protected readonly int $width = 500,
-		protected readonly int $height = 400
+		protected readonly int $width = self::DEFAULT_WIDTH,
+		protected readonly int $height = self::DEFAULT_HEIGHT
 	) {}
 
 	/** @param string[] $labels */
@@ -275,7 +295,7 @@ abstract class AbstractChart
 	{
 		// prettier-ignore
 		$labelMaxY1 = Helper::format($this->yAxis1->getMaxY()) . ' ' . $this->yAxis1->getUnit();
-		$lengthLabelMaxY1 = strlen($labelMaxY1) * 6;
+		$lengthLabelMaxY1 = strlen($labelMaxY1) * self::CHAR_WIDTH_MULTIPLIER;
 
 		if ($this->paddingLabel < $lengthLabelMaxY1) {
 			$this->paddingLabel = $lengthLabelMaxY1;
@@ -287,7 +307,7 @@ abstract class AbstractChart
 
 		// prettier-ignore
 		$labelMaxY2 = Helper::format($this->yAxis2->getMaxY()) . ' ' . $this->yAxis2->getUnit();
-		$lengthLabelMaxY2 = strlen($labelMaxY2) * 6;
+		$lengthLabelMaxY2 = strlen($labelMaxY2) * self::CHAR_WIDTH_MULTIPLIER;
 
 		if ($this->paddingLabel < $lengthLabelMaxY2) {
 			$this->paddingLabel = $lengthLabelMaxY2;
@@ -310,7 +330,9 @@ abstract class AbstractChart
 		);
 
 		$this->paddingLabelX =
-			(int) (sin(deg2rad($this->labelAngle)) * $maxLabelLength * 7);
+			(int) (sin(deg2rad($this->labelAngle)) *
+				$maxLabelLength *
+				self::LABEL_LENGTH_MULTIPLIER);
 	}
 
 	private function drawYaxis(): void
@@ -397,7 +419,11 @@ abstract class AbstractChart
 		float $level
 	): void {
 		$x = $this->computeDotX($this->xAxis->getMinX(), 0);
-		$text = Text::labelRight((string) $objective->value, $x, $level - 8);
+		$text = Text::labelRight(
+			(string) $objective->value,
+			$x,
+			$level - self::OBJECTIVE_LABEL_OFFSET
+		);
 		$text->setAttribute('fill', $objective->color);
 		$this->chart->addChild($text);
 	}
@@ -407,7 +433,11 @@ abstract class AbstractChart
 		float $level
 	): void {
 		$x = $this->computeDotX($this->xAxis->getMaxX());
-		$text = Text::labelLeft((string) $objective->value, $x, $level - 8);
+		$text = Text::labelLeft(
+			(string) $objective->value,
+			$x,
+			$level - self::OBJECTIVE_LABEL_OFFSET
+		);
 		$text->setAttribute('fill', $objective->color);
 		$this->chart->addChild($text);
 	}
@@ -465,7 +495,7 @@ abstract class AbstractChart
 			$this->height - $this->paddingLabelX - 2,
 			$this->labelAngle
 		);
-		$text->setAttribute('fill', '#888888');
+		$text->setAttribute('fill', self::DEFAULT_TEXT_COLOR);
 
 		$this->addChild($text);
 	}

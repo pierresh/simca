@@ -7,6 +7,15 @@ use Pierresh\Simca\Charts\Axis\XAxis\LabelPosition;
 
 class XAxisTime implements XAxisInterface
 {
+	// Time constants in seconds
+	private const SECONDS_PER_DAY = 24 * 60 * 60;
+	private const SECONDS_PER_WEEK = 7 * 24 * 60 * 60;
+	private const SECONDS_PER_3_MONTHS = 90 * 24 * 60 * 60;
+	private const SECONDS_PER_YEAR = 365 * 24 * 60 * 60;
+
+	// Time axis configuration
+	private const TIME_AXIS_STEPS = 5;
+
 	private float $minX = 0;
 
 	private float $maxX = 100;
@@ -47,7 +56,7 @@ class XAxisTime implements XAxisInterface
 	{
 		$xLabels = [];
 
-		for ($i = 0; $i < 5; $i++) {
+		for ($i = 0; $i < self::TIME_AXIS_STEPS; $i++) {
 			$ts = $this->getTimeStampStep($i);
 			$label = date($this->timeFormat, $ts);
 
@@ -59,7 +68,7 @@ class XAxisTime implements XAxisInterface
 
 	public function computeLabelsDisplayed(): void
 	{
-		for ($i = 0; $i < 5; $i++) {
+		for ($i = 0; $i < self::TIME_AXIS_STEPS; $i++) {
 			$ts = $this->getTimeStampStep($i);
 			$label = date($this->timeFormat, $ts);
 
@@ -104,16 +113,16 @@ class XAxisTime implements XAxisInterface
 	{
 		$diff = $this->maxX - $this->minX;
 
-		if ($diff < 24 * 60 * 60) {
+		if ($diff < self::SECONDS_PER_DAY) {
 			// Less than 24 hours, display H:i (hours and minutes)
 			$this->timeFormat = 'H:i';
-		} elseif ($diff < 7 * 24 * 60 * 60) {
+		} elseif ($diff < self::SECONDS_PER_WEEK) {
 			// Less than a week, display "day H:i"
 			$this->timeFormat = 'D H:i';
-		} elseif ($diff < 90 * 24 * 60 * 60) {
+		} elseif ($diff < self::SECONDS_PER_3_MONTHS) {
 			// Less than 3 months, display "MM-DD H:i"
 			$this->timeFormat = 'm-d H:i';
-		} elseif ($diff < 365 * 24 * 60 * 60) {
+		} elseif ($diff < self::SECONDS_PER_YEAR) {
 			// Less than a year, display "YYYY-MM-DD"
 			$this->timeFormat = 'Y-m-d';
 		} else {
@@ -131,7 +140,7 @@ class XAxisTime implements XAxisInterface
 	{
 		$duration = $this->getMaxX() - $this->getMinX();
 
-		$step = $duration / 4;
+		$step = $duration / (self::TIME_AXIS_STEPS - 1);
 
 		$total = $this->getMinX() + $index * $step;
 

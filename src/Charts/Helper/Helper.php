@@ -8,6 +8,12 @@ use Exception;
 
 class Helper
 {
+	// Color processing constants
+	private const LUMA_RED_COEFFICIENT = 0.2126;
+	private const LUMA_GREEN_COEFFICIENT = 0.7152;
+	private const LUMA_BLUE_COEFFICIENT = 0.0722;
+	private const DARK_COLOR_THRESHOLD = 128;
+
 	/**
 	 * Number formatter for data labels
 	 * inspired from Laravel Illuminate\Support\Number but without requiring intl extension
@@ -64,9 +70,12 @@ class Helper
 		$r = ($rgb >> 16) & 0xff;
 		$g = ($rgb >> 8) & 0xff;
 		$b = $rgb & 0xff;
-		$luma = 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+		$luma =
+			self::LUMA_RED_COEFFICIENT * $r +
+			self::LUMA_GREEN_COEFFICIENT * $g +
+			self::LUMA_BLUE_COEFFICIENT * $b;
 
-		return $luma < 128;
+		return $luma < self::DARK_COLOR_THRESHOLD;
 	}
 
 	/**

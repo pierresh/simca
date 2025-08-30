@@ -15,9 +15,15 @@ use Pierresh\Simca\Model\Dot;
  */
 class BarChart extends AbstractChart
 {
-	private float $barGap = 3;
+	// Bar chart specific constants
+	private const BAR_GAP = 3;
+	private const BAR_SIZE_RATIO = 0.75;
+	private const LABEL_VERTICAL_OFFSET_TOP = 8;
+	private const LABEL_VERTICAL_OFFSET_CENTER = 4;
+	private const STACKED_LABEL_ADJUSTMENT = 2;
+	private float $barGap = self::BAR_GAP;
 
-	private float $barSizeRatio = 0.75;
+	private float $barSizeRatio = self::BAR_SIZE_RATIO;
 
 	private float $groupWidth = 0;
 
@@ -124,23 +130,24 @@ class BarChart extends AbstractChart
 				$pointX = $dot->x - ($this->barSizeRatio * $this->groupWidth) / 2 + $this->barWidth * $indexSerie + $this->barWidth / 2;
 				$pointX += $indexSerie  * $this->barGap;
 
-				$pointY = $dot->y - 8;
+				$pointY = $dot->y - self::LABEL_VERTICAL_OFFSET_TOP;
 			} elseif ($this->has1Yaxis()) {
 				$pointX = $dot->x;
 
-				$pointY = $dot->y + ($this->height - $this->computeDotY1($dot->value)) / 2 - 4;
+				$pointY = $dot->y + ($this->height - $this->computeDotY1($dot->value)) / 2 - self::LABEL_VERTICAL_OFFSET_CENTER;
 			} elseif ($this->leftAxis($indexSerie)) {
 				$pointX = $dot->x - ($this->barSizeRatio * $this->groupWidth) / 2 + $this->barWidth / 2;
 
-				$pointY = $dot->y + ($this->height - $this->computeDotY1($dot->value)) / 2 - 4;
+				$pointY = $dot->y + ($this->height - $this->computeDotY1($dot->value)) / 2 - self::LABEL_VERTICAL_OFFSET_CENTER;
 			} else {
 				$pointX = $dot->x - ($this->barSizeRatio * $this->groupWidth) / 2 + $this->barWidth + $this->barWidth / 2;
 
-				$pointY = $dot->y + ($this->height - $this->computeDotY2($dot->value)) / 2 - 4;
+				$pointY = $dot->y + ($this->height - $this->computeDotY2($dot->value)) / 2 - self::LABEL_VERTICAL_OFFSET_CENTER;
 			}
 
 			if ($this->stacked) {
-				$pointY -= $this->paddingLabelX / 2;
+				$pointY -=
+					$this->paddingLabelX / self::STACKED_LABEL_ADJUSTMENT;
 			}
 
 			$obj = Text::label((string) $dot->value, $pointX, $pointY);

@@ -8,6 +8,12 @@ use Pierresh\Simca\Model\Dot;
 
 class LineChartHandler
 {
+	// Bézier curve control point factor
+	private const CURVE_CONTROL_POINT_FACTOR = 4;
+
+	// Mathematical constants
+	private const SQUARE_EXPONENT = 2;
+
 	/** @param Dot[] $dots */
 	public function createStraightPath(array $dots): string
 	{
@@ -60,7 +66,7 @@ class LineChartHandler
 
 			$g = $grads[$i];
 			$lg = $grads[$i - 1];
-			$ix = ($dot->x - $prevCoord->x) / 4;
+			$ix = ($dot->x - $prevCoord->x) / self::CURVE_CONTROL_POINT_FACTOR;
 
 			$x1 = $prevCoord->x + $ix;
 			$y1 = $prevCoord->y + $ix * $lg;
@@ -145,12 +151,14 @@ class LineChartHandler
 			$sumX += $dot->x;
 			$sumY += $dot->y;
 			$sumXY += $dot->x * $dot->y;
-			$sumX2 += $dot->x ** 2;
-			$sumY2 += $dot->y ** 2;
+			$sumX2 += $dot->x ** self::SQUARE_EXPONENT;
+			$sumY2 += $dot->y ** self::SQUARE_EXPONENT;
 			$n++;
 		}
 
-		$a = ($n * $sumXY - $sumX * $sumY) / ($n * $sumX2 - $sumX ** 2);
+		$a =
+			($n * $sumXY - $sumX * $sumY) /
+			($n * $sumX2 - $sumX ** self::SQUARE_EXPONENT);
 		$b = ($sumY - $a * $sumX) / $n;
 
 		$startDot = new Dot($startTrend, $a * $startTrend + $b);
