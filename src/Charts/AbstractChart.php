@@ -18,6 +18,7 @@ use Pierresh\Simca\Charts\Axis\XAxis\XAxisTime;
 use Pierresh\Simca\Charts\Axis\YAxis\YAxisInterface;
 use Pierresh\Simca\Charts\Axis\YAxis\YAxisStandard;
 use Pierresh\Simca\Charts\Helper\Helper;
+use Pierresh\Simca\Charts\Helper\PathBuilder;
 use Pierresh\Simca\Charts\Handler\Traits;
 
 /**
@@ -354,7 +355,10 @@ abstract class AbstractChart
 
 		$vertical = $this->computeDotX($this->xAxis->getMinX());
 
-		$path = 'M' . $vertical . '.5,' . $start . 'V' . $end;
+		$path = PathBuilder::create()
+			->moveTo($vertical + 0.5, $start)
+			->verticalTo($end)
+			->build();
 
 		$obj = Path::build($path);
 
@@ -373,7 +377,10 @@ abstract class AbstractChart
 			$this->addYaxis1Label($level);
 			$horizontal = (int) $this->computeDotY1($level);
 
-			$path = 'M' . $start . ',' . $horizontal . '.5H' . $end;
+			$path = PathBuilder::create()
+				->moveTo($start, $horizontal + 0.5)
+				->horizontalTo($end)
+				->build();
 
 			$obj = Path::build($path);
 
@@ -448,8 +455,13 @@ abstract class AbstractChart
 		// This prevents conflict in SVG with decimal values
 		$level = (int) $level;
 
-		// prettier-ignore
-		$path = 'M' . $this->computeDotX($this->xAxis->getMinX(), 0) . ',' . $level . '.5H' . $this->computeDotX($this->xAxis->getMaxX(), 0);
+		$path = PathBuilder::create()
+			->moveTo(
+				$this->computeDotX($this->xAxis->getMinX(), 0),
+				$level + 0.5
+			)
+			->horizontalTo($this->computeDotX($this->xAxis->getMaxX(), 0))
+			->build();
 
 		$obj = Path::build($path, $objective->color, $objective->width);
 
