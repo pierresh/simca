@@ -11,6 +11,7 @@ use Pierresh\Simca\Model\Objective;
 use Pierresh\Simca\Adapter\SVG;
 use Pierresh\Simca\Adapter\Text;
 use Pierresh\Simca\Adapter\Path;
+use Pierresh\Simca\Charts\BubbleChart;
 use Pierresh\Simca\Charts\Axis\XAxis\XAxisInterface;
 use Pierresh\Simca\Charts\Axis\XAxis\XAxisStandard;
 use Pierresh\Simca\Charts\Axis\XAxis\XAxisTime;
@@ -502,44 +503,51 @@ abstract class AbstractChart
 
 	protected function computeDotX(float $x, float $margin = null): float
 	{
-		if (is_null($margin)) {
-			$margin = $this->marginChart;
-		}
+		$margin ??= $this->marginChart;
+		$paddingLabel = $this->getEffectivePaddingLabel();
 
-		$paddingLabel = $this->paddingLabel;
-		if ($this->has2Yaxis()) {
-			$paddingLabel = 2 * $this->paddingLabel;
-		}
+		$width =
+			$this->width - 2 * $this->padding - $paddingLabel - $margin * 2;
+		$result =
+			$this->padding +
+			$this->paddingLabel +
+			$margin +
+			$width * $this->xAxis->convertXValue($x);
 
-		// prettier-ignore
-		$width = $this->width - 2 * $this->padding - $paddingLabel - $margin * 2;
-
-		// prettier-ignore
-		$x = $this->padding + $this->paddingLabel + $margin + $width * $this->xAxis->convertXValue($x);
-
-		return round($x, 2);
+		return round($result, 2);
 	}
 
 	protected function computeDotY1(float $y): float
 	{
-		$chartHeight = $this->height - $this->paddingLabelX;
-		$height = $chartHeight - 2 * $this->padding;
-
-		// prettier-ignore
-		$y1 = $chartHeight - $this->padding - $height * $this->yAxis1->convertYValue($y);
-
-		return round($y1, 2);
+		return $this->computeDotY($y, $this->yAxis1);
 	}
 
 	protected function computeDotY2(float $y): float
 	{
-		$chartHeight = $this->height - $this->paddingLabelX;
+		return $this->computeDotY($y, $this->yAxis2);
+	}
+
+	private function computeDotY(float $y, YAxisInterface $yAxis): float
+	{
+		$chartHeight = $this->getEffectiveChartHeight();
 		$height = $chartHeight - 2 * $this->padding;
 
-		// prettier-ignore
-		$y2 = $chartHeight - $this->padding - $height * $this->yAxis2->convertYValue($y);
+		$result =
+			$chartHeight - $this->padding - $height * $yAxis->convertYValue($y);
 
-		return round($y2, 2);
+		return round($result, 2);
+	}
+
+	protected function getEffectivePaddingLabel(): float
+	{
+		return $this->has2Yaxis()
+			? 2 * $this->paddingLabel
+			: $this->paddingLabel;
+	}
+
+	protected function getEffectiveChartHeight(): float
+	{
+		return $this->height - $this->paddingLabelX;
 	}
 
 	private function computeDots(): void

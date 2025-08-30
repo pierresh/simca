@@ -57,11 +57,7 @@ class BarChart extends AbstractChart
 
 	private function computeGroupWidth(): void
 	{
-		$paddingLabel = $this->paddingLabel;
-		if ($this->has2Yaxis()) {
-			$paddingLabel = 2 * $this->paddingLabel;
-		}
-
+		$paddingLabel = $this->getEffectivePaddingLabel();
 		$width = $this->width - 2 * $this->padding - $paddingLabel;
 		$this->groupWidth = $width / count($this->labels);
 
