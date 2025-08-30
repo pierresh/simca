@@ -5,7 +5,7 @@ namespace Pierresh\Simca\Charts\Axis\YAxis;
 use Pierresh\Simca\Model\Objective;
 
 /**
- * @phpstan-type Serie number[]
+ * @phpstan-type Serie (int|float)[]
  */
 class YAxisStandard implements YAxisInterface
 {

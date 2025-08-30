@@ -21,7 +21,7 @@ use Pierresh\Simca\Charts\Helper\Helper;
 use Pierresh\Simca\Charts\Handler\Traits;
 
 /**
- * @phpstan-type Serie number[]
+ * @phpstan-type Serie (int|float)[]
  */
 abstract class AbstractChart
 {
@@ -115,13 +115,13 @@ abstract class AbstractChart
 
 	/**
 	 * Buffer to compute stacked values on axis Y1
-	 * @var number[]
+	 * @var (int|float)[]
 	 */
 	private array $tmpStackedY1 = [];
 
 	/**
 	 * Buffer to compute stacked values on axis Y2
-	 * @var number[]
+	 * @var (int|float)[]
 	 */
 	private array $tmpStackedY2 = [];
 
@@ -649,8 +649,6 @@ abstract class AbstractChart
 
 	private function isBubbleChart(): bool
 	{
-		$className = static::class;
-		$simpleClassName = basename(str_replace('\\', '/', $className));
-		return $simpleClassName === 'BubbleChart';
+		return $this instanceof BubbleChart;
 	}
 }
