@@ -301,9 +301,9 @@ abstract class AbstractChart
 			$this->computeDots();
 		}
 
-		$this->drawChart();
-
 		$this->drawObjectives();
+
+		$this->drawChart();
 
 		if (!$this->isBubbleChart() || $this->isTimeChart) {
 			$this->addXAxisLabels();
