@@ -542,7 +542,7 @@ abstract class AbstractChart
 		$this->addChild($text);
 	}
 
-	protected function computeDotX(float $x, float $margin = null): float
+	protected function computeDotX(float $x, ?float $margin = null): float
 	{
 		$margin ??= $this->marginChart;
 		$paddingLabel = $this->getEffectivePaddingLabel();
