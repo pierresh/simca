@@ -33,13 +33,17 @@ class BubbleChart extends AbstractChart
 	{
 		$this->labels = [];
 		foreach ($this->series as $serie) {
-			$this->labels[] = (string) $serie[0];
+			$this->labels[] = (string) ($serie[0] ?? '');
 		}
 	}
 
 	private function drawBubbles(): void
 	{
 		foreach ($this->series as $indexSerie => $serie) {
+			if (count($serie) < 3) {
+				continue;
+			}
+
 			if ($this->isTimeChart) {
 				$ts = (float) Helper::convertLabelToTimestamp(
 					(string) $serie[0]

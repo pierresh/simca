@@ -78,6 +78,10 @@ class XAxisTime implements XAxisInterface
 
 	private function computeMinMaxXaxis(): void
 	{
+		if ($this->labels === []) {
+			return;
+		}
+
 		$minX = null;
 		$maxX = null;
 
@@ -133,7 +137,12 @@ class XAxisTime implements XAxisInterface
 
 	public function convertXValue(int|float $x): float
 	{
-		return ($x - $this->minX) / ($this->maxX - $this->minX);
+		$range = $this->maxX - $this->minX;
+		if ($range == 0) {
+			return 0;
+		}
+
+		return ($x - $this->minX) / $range;
 	}
 
 	private function getTimeStampStep(int $index): int

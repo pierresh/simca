@@ -601,7 +601,7 @@ abstract class AbstractChart
 	}
 
 	/** @param Serie $serie */
-	private function addComputedSerie($serie, int $indexSerie): void
+	private function addComputedSerie(array $serie, int $indexSerie): void
 	{
 		$computedSerie = [];
 

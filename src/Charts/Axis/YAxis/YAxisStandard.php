@@ -62,7 +62,7 @@ class YAxisStandard implements YAxisInterface
 				$tmpCumulY = 0;
 
 				foreach ($this->series as $serie) {
-					$tmpCumulY += $serie[$indexLabel];
+					$tmpCumulY += $serie[$indexLabel] ?? 0;
 				}
 
 				$this->maxY = max($this->maxY, $tmpCumulY);

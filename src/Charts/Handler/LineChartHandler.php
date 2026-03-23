@@ -53,8 +53,6 @@ class LineChartHandler
 
 		$grads = $this->gradients($dots);
 
-		$xdots = [];
-
 		foreach ($dots as $i => $dot) {
 			if (is_null($prevCoord->y)) {
 				$prevCoord = $dot;
@@ -79,7 +77,6 @@ class LineChartHandler
 
 			// prettier-ignore
 			$path .= "C" . $x1 .",".$y1.",".$x2.",".$y2.",".$x.",".$y;
-			$xdots[] = (int) $x1 . ' - ' . (int) $x2 . ' - ' . (int) $x;
 
 			$prevCoord = $dot;
 		}

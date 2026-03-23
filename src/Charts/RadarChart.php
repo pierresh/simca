@@ -174,7 +174,7 @@ class RadarChart
 	}
 
 	/** @param Serie $serie */
-	private function addComputedSerie($serie): void
+	private function addComputedSerie(array $serie): void
 	{
 		$currentAngle = $this->startAngle;
 
@@ -365,7 +365,12 @@ class RadarChart
 
 	private function axisPosition(float $value): float
 	{
-		return ($value * $this->radius) / ($this->max - $this->min);
+		$range = $this->max - $this->min;
+		if ($range == 0) {
+			return 0;
+		}
+
+		return ($value * $this->radius) / $range;
 	}
 
 	private function drawGrid(): void
@@ -404,6 +409,10 @@ class RadarChart
 
 	private function computeAngle(): void
 	{
+		if ($this->series === [] || $this->series[0] === []) {
+			return;
+		}
+
 		$this->nbAxis = count($this->series[0]);
 		$this->angle = self::FULL_CIRCLE_DEGREES / $this->nbAxis;
 	}

@@ -53,6 +53,11 @@ class XAxisStandard implements XAxisInterface
 
 	public function convertXValue(int|float $x): float
 	{
-		return $x / (count($this->labels) - 1);
+		$count = count($this->labels);
+		if ($count <= 1) {
+			return 0;
+		}
+
+		return $x / ($count - 1);
 	}
 }
