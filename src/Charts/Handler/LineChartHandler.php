@@ -125,13 +125,13 @@ class LineChartHandler
 
 	/**
 	 * @param Dot[] $dots
-	 * @return array{startDot: Dot, endDot: Dot}
+	 * @return array{startDot: Dot, endDot: Dot}|null
 	 */
 	public function computeTrendLine(
 		array $dots,
 		float $startTrend,
 		float $endTrend
-	): array {
+	): ?array {
 		// Compute root mean square trend line
 		$sumX = 0;
 		$sumY = 0;
@@ -153,9 +153,13 @@ class LineChartHandler
 			$n++;
 		}
 
-		$a =
-			($n * $sumXY - $sumX * $sumY) /
-			($n * $sumX2 - $sumX ** self::SQUARE_EXPONENT);
+		$denominator = $n * $sumX2 - $sumX ** self::SQUARE_EXPONENT;
+
+		if ($n === 0 || $denominator == 0) {
+			return null;
+		}
+
+		$a = ($n * $sumXY - $sumX * $sumY) / $denominator;
 		$b = ($sumY - $a * $sumX) / $n;
 
 		$startDot = new Dot($startTrend, $a * $startTrend + $b);

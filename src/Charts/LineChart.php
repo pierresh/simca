@@ -111,6 +111,10 @@ class LineChart extends AbstractChart
 				$endTrend
 			);
 
+			if ($trend === null) {
+				continue;
+			}
+
 			$color = $this->getColor($indexSerie);
 
 			$obj = Line::build($trend['startDot'], $trend['endDot'], $color, 1);
