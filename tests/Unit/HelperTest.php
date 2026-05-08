@@ -22,11 +22,14 @@ describe('format method', function () {
 		expect(Helper::format(42.123, 1))->toBe('42.1');
 	});
 
-	test('respects maxPrecision parameter and removes trailing zeros', function () {
-		expect(Helper::format(1234.5000, null, 4))->toBe('1,234.5');
-		expect(Helper::format(1000.0, null, 2))->toBe('1,000');
-		expect(Helper::format(42.100, null, 3))->toBe('42.1');
-	});
+	test(
+		'respects maxPrecision parameter and removes trailing zeros',
+		function () {
+			expect(Helper::format(1234.5, null, 4))->toBe('1,234.5');
+			expect(Helper::format(1000.0, null, 2))->toBe('1,000');
+			expect(Helper::format(42.1, null, 3))->toBe('42.1');
+		}
+	);
 
 	test('handles negative numbers', function () {
 		expect(Helper::format(-1000))->toBe('-1,000');
@@ -62,19 +65,23 @@ describe('isColorDark method', function () {
 describe('convertLabelToTimestamp method', function () {
 	test('converts valid date strings to timestamps', function () {
 		$timestamp = Helper::convertLabelToTimestamp('2024-01-01');
-		
+
 		expect($timestamp)->toBe(1704067200);
 	});
 
 	test('converts datetime strings to timestamps', function () {
 		$timestamp = Helper::convertLabelToTimestamp('2024-01-01 12:00:00');
-		
+
 		expect($timestamp)->toBe(1704110400);
 	});
 
 	test('throws exception for invalid date strings', function () {
-		expect(fn() => Helper::convertLabelToTimestamp('invalid-date'))
-			->toThrow(Exception::class, 'invalid-date cannot be converted to a timestamp');
+		expect(
+			fn() => Helper::convertLabelToTimestamp('invalid-date')
+		)->toThrow(
+			Exception::class,
+			'invalid-date cannot be converted to a timestamp'
+		);
 	});
 
 	test('handles various date formats', function () {
@@ -97,7 +104,7 @@ describe('convertOptions method', function () {
 	test('returns options array unchanged', function () {
 		$options = ['numLines' => 5, 'stacked' => true, 'unitY1' => 'kg'];
 		$result = Helper::convertOptions($options);
-		
+
 		expect($result)->toBe($options);
 		expect($result)->toEqual($options);
 	});
@@ -109,9 +116,9 @@ describe('convertOptions method', function () {
 			'float' => 3.14,
 			'bool' => true,
 		];
-		
+
 		$result = Helper::convertOptions($options);
-		
+
 		expect($result['string'])->toBeString();
 		expect($result['int'])->toBeInt();
 		expect($result['float'])->toBeFloat();

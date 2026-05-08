@@ -39,7 +39,7 @@
 		"refactor": "rector",
 		"test": "./vendor/bin/pest --watch",
 		"test-one-run": "./vendor/bin/pest",
-		"stan": "./vendor/bin/phpstan analyse --ansi ",
+		"stan": "./vendor/bin/phpstan analyse --ansi --memory-limit 1G ",
 		"format": "npx prettier --write ./src ./tests | grep -v 'unchanged' | xargs",
 		"quality": [
 			"@stan",

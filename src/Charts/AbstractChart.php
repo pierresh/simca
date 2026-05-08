@@ -354,10 +354,7 @@ abstract class AbstractChart
 		}
 
 		$maxLabelLength = max(
-			array_map(
-				fn(string $label): int => strlen($label),
-				$this->xAxis->getLabelsDisplayed()
-			)
+			array_map(strlen(...), $this->xAxis->getLabelsDisplayed())
 		);
 
 		$this->paddingLabelX =

@@ -182,8 +182,8 @@ class RadarChart
 
 		foreach ($serie as $value) {
 			if ($this->stacked) {
-				$value += $this->tmpStacked[$currentAngle] ?? 0;
-				$this->tmpStacked[$currentAngle] = $value;
+				$value += $this->tmpStacked[(string) $currentAngle] ?? 0;
+				$this->tmpStacked[(string) $currentAngle] = $value;
 			}
 
 			$dot = $this->computeDot($currentAngle, $value);

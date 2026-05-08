@@ -17,11 +17,6 @@ class BubbleChart extends AbstractChart
 {
 	public array $labels;
 
-	public function __construct(int $width = 500, int $height = 400)
-	{
-		parent::__construct($width, $height);
-	}
-
 	public function drawChart(): void
 	{
 		$this->computeMinMax();

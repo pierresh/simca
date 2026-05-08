@@ -29,11 +29,6 @@ class BarChart extends AbstractChart
 
 	private float $barWidth = 0;
 
-	public function __construct(int $width = 500, int $height = 400)
-	{
-		parent::__construct($width, $height);
-	}
-
 	public function drawChart(): void
 	{
 		$this->computeGroupWidth();

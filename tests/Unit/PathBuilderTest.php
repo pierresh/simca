@@ -3,10 +3,7 @@
 use Pierresh\Simca\Charts\Helper\PathBuilder;
 
 test('creates simple path with moveTo and lineTo', function () {
-	$path = PathBuilder::create()
-		->moveTo(10, 20)
-		->lineTo(30, 40)
-		->build();
+	$path = PathBuilder::create()->moveTo(10, 20)->lineTo(30, 40)->build();
 
 	expect($path)->toBe('M10,20L30,40');
 });
