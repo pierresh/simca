@@ -393,9 +393,12 @@ abstract class AbstractChart
 
 	private function drawXaxis(): void
 	{
-		$start = $this->computeDotX($this->xAxis->getMinX(), 0);
+		$start = $this->padding + $this->paddingLabel;
 
-		$end = $this->computeDotX($this->xAxis->getMaxX(), 0);
+		$end = $this->width - $this->padding;
+		if ($this->has2Yaxis()) {
+			$end -= $this->paddingLabel;
+		}
 
 		$levels = $this->yAxis1->autoGridLines($this->numLines);
 
@@ -452,7 +455,7 @@ abstract class AbstractChart
 		Objective $objective,
 		float $level
 	): void {
-		$x = $this->computeDotX($this->xAxis->getMinX(), 0);
+		$x = $this->padding + $this->paddingLabel;
 		$text = Text::labelRight(
 			(string) $objective->value,
 			$x,
@@ -466,7 +469,7 @@ abstract class AbstractChart
 		Objective $objective,
 		float $level
 	): void {
-		$x = $this->computeDotX($this->xAxis->getMaxX());
+		$x = $this->width - $this->padding - $this->paddingLabel;
 		$text = Text::labelLeft(
 			(string) $objective->value,
 			$x,
@@ -481,12 +484,15 @@ abstract class AbstractChart
 		// This prevents conflict in SVG with decimal values
 		$level = (int) $level;
 
+		$start = $this->padding + $this->paddingLabel;
+		$end = $this->width - $this->padding;
+		if ($this->has2Yaxis()) {
+			$end -= $this->paddingLabel;
+		}
+
 		$path = PathBuilder::create()
-			->moveTo(
-				$this->computeDotX($this->xAxis->getMinX(), 0),
-				$level + 0.5
-			)
-			->horizontalTo($this->computeDotX($this->xAxis->getMaxX(), 0))
+			->moveTo($start, $level + 0.5)
+			->horizontalTo($end)
 			->build();
 
 		$obj = Path::build($path, $objective->color, $objective->width);
